@@ -6,7 +6,7 @@ from django.core.files.storage import FileSystemStorage
 # from django.views.generic import TemplateView
 # from django.core.files.storage import FileSystemStorage
 # from django.shortcuts import redirect
-# from django.urls import reverse 
+# from django.urls import reverse
 # from django.views.generic import FormView
 # from . import constants
 
@@ -31,9 +31,9 @@ class multiFormSubmission(SessionWizardView):
         })
 # def getCurrForm(session_hash):
 #     # Returns an incomplete form response with a matching session hashcode or None
-#     # if the object does not exist 
+#     # if the object does not exist
 #     return teams.objects.filter(
-#         session_hash=session_hash, 
+#         session_hash=session_hash,
 #     ).exclude(
 #         stage = constants.COMPLETE
 #     ).first()
@@ -41,15 +41,15 @@ class multiFormSubmission(SessionWizardView):
 # class teamsFormView(FormView):
 #     template = 'home.html'
 #     form = None
-#     form_class = None 
+#     form_class = None
 
 # #get the form for this session
 # def dispatch(self, request, *args, **kwargs):
 #     session_hash = request.session.get("session_hash", None)
-    
-#     #get the form for the current session 
+
+#     #get the form for the current session
 #     self.form = getCurrForm(session_hash)
-#     #attach the request to "self" to be accessed later 
+#     #attach the request to "self" to be accessed later
 
 
 # def home(request):
