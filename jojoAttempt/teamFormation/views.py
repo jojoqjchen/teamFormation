@@ -10,7 +10,7 @@ from django.core.files.storage import FileSystemStorage
 # from django.views.generic import FormView
 # from . import constants
 
-from .models import upload, size, characteristics
+#from .models import upload, size, characteristics
 from .forms import uploadForm, sizeForm, characteristicsForm
 import os
 
@@ -21,14 +21,14 @@ def home(request):
 
 class multiFormSubmission(SessionWizardView):
     template_name = 'form.html'
-    form_list = [uploadForm, sizeForm, characteristicsForm]
-    file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'csv'))
+    form_list = [#uploadForm,
+    sizeForm, characteristicsForm]
+    #file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'csv'))
 
     def done(self, form_list, **kwargs):
-        form_data = [form.cleaned_data for form in form_list]
-        return render(self.request, 'home.html', {
-            'data' : form_data
-        })
+        return render(self.request, 'success.html', #{'form_data': [form.cleaned_data for form in form_list],}
+        )
+
 # def getCurrForm(session_hash):
 #     # Returns an incomplete form response with a matching session hashcode or None
 #     # if the object does not exist

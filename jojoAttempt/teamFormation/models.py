@@ -5,22 +5,22 @@ from django.db import models
 # Create your models here.
 
 #Step 1
-class upload(models.Model):
-    csvFile = models.FileField()
-    def __str__(self):
-        return self.csvFile
-
-#Step 2
-class size(models.Model):
-    teamSize = models.IntegerField()
-    def __str__(self):
-        return self.teamSize
-
-#Step 3
-class characteristics(models.Model):
-    characteristic = models.CharField(max_length=50)
-    def __str__(self):
-        return self.characteristic
+# class upload(models.Model):
+#     csvFile = models.FileField()
+#     def __str__(self):
+#         return self.csvFile
+#
+# #Step 2
+# class size(models.Model):
+#     teamSize = models.IntegerField()
+#     def __str__(self):
+#         return self.teamSize
+#
+# #Step 3
+# class characteristics(models.Model):
+#     characteristic = models.CharField(max_length=50)
+#     def __str__(self):
+#         return self.characteristic
 
 
 

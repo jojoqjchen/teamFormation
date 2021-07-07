@@ -20,14 +20,13 @@
         {{ wizard.form }}
     {% endif %}
     </table>
-    {% if not wizard.steps.prev %}
-    <button name="wizard_goto_step" class="btn btn-primary type="submit" value="{{ wizard.steps.next }}">Next</button>
-    {% elif wizard.steps.next %}
-    <button name="wizard_goto_step" class="btn btn-primary type="submit" value="{{ wizard.steps.prev }}">Back</button>
-    <button name="wizard_goto_step" class="btn btn-primary type="submit" value="{{ wizard.steps.next }}" >Next</button>
+    {% if wizard.steps.prev %}
+      <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">Prev step</button>
     {% endif %}
-    {% if not wizard.steps.next %}
-    <input type="submit" value="submit"/>
+    {% if wizard.steps.next %}
+      <input type="submit" value="Next"/>
+    {% else %}
+      <input type="submit" value="Submit"/>
     {% endif %}
     </form>
     {% endblock %}
