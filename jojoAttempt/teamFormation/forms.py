@@ -21,8 +21,8 @@ from django import forms
 
 ### Malo Attempt: using Forms instead of ModelForm
 
-class uploadForm(forms.Form):
-    uploaded_file = forms.FileField(help_text = 'Upload a .csv file.')
+class uploadForm(forms.Form): # PROBLEM: WHEN forms.FileField, a problem arises…
+    uploaded_file = forms.IntegerField(help_text = 'Upload a .csv file.')
 
 class sizeForm(forms.Form):
     team_size = forms.IntegerField(help_text = 'Enter the team size.')
