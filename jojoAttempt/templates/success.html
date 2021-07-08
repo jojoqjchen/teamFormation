@@ -2,5 +2,9 @@
 
 {% block content %}
 <p>Thank you for submitting your teams!</p>
-{{ form_data }}
+{% for field in form_data%}
+  <ul>
+    <li>{{field}}</li>
+  </ul>
+{% endfor %}
 {% endblock %}
