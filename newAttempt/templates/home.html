@@ -6,5 +6,9 @@
   </head>
   <body>
     <h1>This is our home page.</h1>
+    {% block content %}
+    <p>Click here to access the team formation tool:</p>
+    <a href="{% url 'survey_input' %}">Team Formation Tool</a>
+    {% endblock %}
   </body>
 </html>
