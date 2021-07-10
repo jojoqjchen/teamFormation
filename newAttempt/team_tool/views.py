@@ -6,6 +6,7 @@ from team_tool.forms import SurveyInput
 from django.core.files.storage import FileSystemStorage
 import pandas as pd
 import csv, io
+from django.contrib.auth.decorators import login_required
 
 from .forms import SurveyInput
 
@@ -13,20 +14,13 @@ from .forms import SurveyInput
 class Home(TemplateView):
     template_name = 'home.html'
 
-
+@login_required
 def survey_input(request):
     if request.method == 'POST':
         form = SurveyInput(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            csv_file = request.FILES['csvFile']
-            data_set = csv_file.read().decode("utf-8")
-            lines = file_data.split("\n")
-            for line in lines:
-                fields = line.split(",")
-                print(fields[0])
-            context = {'file_name': lines, 'file_size': 0, 'file': 0}
-            return render(request, 'survey_step_2.html', context = context)
+            return render(request, 'survey_step_2.html')
     else:
         form = SurveyInput()
     return render(request, 'upload_form.html', {
