@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<p>Thank you for submitting your teams!</p>
+{% for field in data%}
+  <ul>
+    <li>{{field}}</li>
+  </ul>
+{% endfor %}
+{% endblock %}
