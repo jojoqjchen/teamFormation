@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<p>Thank you for submitting your teams!</p>
+<p>Column Names: {{colNames}}</p>
+{% for field in data%}
+  <ul>
+    <li>{{field}}</li>
+  </ul>
+{% endfor %}
+<p>Team Size: {{size}}</p>
+{% endblock %}

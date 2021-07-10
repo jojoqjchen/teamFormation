@@ -1,23 +1,28 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from .models import csvUpload
-from .forms import fileForm, colForm
+from .forms import fileForm, colForm, teamSizeForm
 import csv
 from django.http import HttpResponse
 
 # Create your views here.
 
-#Step 1: Upload CSV File
+# Step 1: Upload CSV File
 def uploadFile(request):
     if request.method == 'POST':
-        #clean up csv file
+        # Validation may go here: 
+        # https://stackoverflow.com/questions/54403638/django-csv-file-validation-in-model-form-clean-method
         data=[]
         form = request.FILES['csvFile']
         decoded_file = form.read().decode('utf-8').splitlines()
-        reader = csv.DictReader(decoded_file)
+        reader = csv.reader(decoded_file)
         for row in reader:
             data.append(row) 
-        #save data to session
+        # save column names separately
+        colNames = data.pop(0)
+        print("names" + str(colNames))
+        request.session['colNames'] = colNames
+        # save data to session
         request.session['data'] = data
         return redirect('/columns/')
    
@@ -25,16 +30,29 @@ def uploadFile(request):
         form = fileForm()
     return render(request, 'home.html', {'form': form})
 
+# Step 2: Pick similar and different columns 
 def pickColumns(request):
     if request.method == 'POST':
-        # request.session['data'] = "Success!"
-        data = request.session['data']
-        return render(request, 'columns.html', {'data': data})
+        # TODO: save columns 
+        return redirect('/teamsize/')
     else:
         form = colForm()
     return render(request, 'home.html', {'form': form})
     
-        
+ # Step 3: Enter team size 
+def teamSize(request):
+    if request.method == 'POST':
+        data = request.session['data'] 
+        colNames = request.session['colNames']
+        size = request.POST.get('size')
+        return render(request, 'success.html', {
+            'data': data,
+            'size': size,
+            'colNames': colNames, 
+        })
+    else:
+        form = teamSizeForm()
+    return render(request, 'home.html', {'form': form})         
 
 # test_session and test_delete Checks whether the browser accepted the cookie or not 
 def test_session(request):
@@ -49,10 +67,9 @@ def test_delete(request):
         response = HttpResponse("Cookie test failed")
     return response
 
-# views to manage session data 
+# EXAMPLE views to manage session data 
 def save_session_data(request):
-    # manipulate data
-    request.session['data'] = request.GET.get('data') #Does nothing
+    request.session['data'] = request.GET.get('data')
     return HttpResponse("Session Data Saved")
 
 def access_session_data(request):
