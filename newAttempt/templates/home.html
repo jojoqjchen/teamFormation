@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <h1>This is our home page.</h1>
+    {% block content %}
+    <p>Click here to access the team formation tool:</p>
+    <a href="{% url 'upload_form' %}">Team Formation Tool</a>
+    {% endblock %}
+    {% if user.is_authenticated %}
+      <li>User: {{ user.get_username }}</li>
+      <li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>
+    {% else %}
+      <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>
+    {% endif %}
+  </body>
+</html>

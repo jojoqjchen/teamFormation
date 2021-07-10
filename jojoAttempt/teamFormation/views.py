@@ -24,7 +24,7 @@ class multiFormSubmission(SessionWizardView):
     template_name = 'form.html'
     form_list = [uploadForm, sizeForm, characteristicsForm]
     file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'csv'))
-    
+
     def done(self, form_list, **kwargs):
         cleaned_data = [form.cleaned_data for form in form_list]
         return render(self.request, 'success.html', context = {'form_data': cleaned_data})

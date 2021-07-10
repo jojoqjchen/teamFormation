@@ -11,7 +11,6 @@ class upload(models.Model):
     def __str__(self):
         return self.csvFile
 
-
 #Step 2
 class size(models.Model):
     teamSize = models.IntegerField()
@@ -23,8 +22,6 @@ class characteristics(models.Model):
     characteristic = models.CharField(max_length=50)
     def __str__(self):
         return self.characteristic
-
-
 
 # class Document(models.Model):
 #     file = models.FileField(upload_to="documents/%Y/%m/%d", validators=[validate_file_extension])
