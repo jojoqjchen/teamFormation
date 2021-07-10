@@ -1,5 +1,8 @@
 from django import forms
-from . import validators
+from django import forms
+from .models import Upload
 
-class SurveyInput(forms.Form):
-    csvFile = forms.FileField(help_text = "Please enter a csv file", validators = [validators.validate_file_extension])
+class SurveyInput(forms.ModelForm):
+    class Meta:
+        model = Upload
+        fields = '__all__'

@@ -5,7 +5,7 @@
 <p>The survey will be here.</p>
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
-  <input type="file" name="document">
+  {{ form }}
   <button type="submit">Upload file</button>
 </form>
 {% endblock %}
