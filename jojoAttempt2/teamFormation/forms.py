@@ -8,12 +8,19 @@ class fileForm(forms.ModelForm):
         fields = '__all__'
 
 class colForm(forms.ModelForm):
-    COL_CHOICES =(
-        ("1", "Similar"),
-        ("2", "Different"),
-        ("3", "Ignore"),
-    )
-    choice = forms.TypedChoiceField(choices = COL_CHOICES)
+    def __init__(self, columns, *args, **kwargs):
+        COL_CHOICES =(
+            ("1", "Similar"),
+            ("2", "Different"),
+            ("3", "Ignore"),
+        )
+
+        super().__init__(*args, **kwargs)
+        column_list = columns
+        for i in range(len(column_list)):
+            field_name = column_list[i]
+            self.fields[field_name] = forms.TypedChoiceField(choices = COL_CHOICES, required=True)
+
     class Meta:
         model = pickCols
         fields = '__all__'

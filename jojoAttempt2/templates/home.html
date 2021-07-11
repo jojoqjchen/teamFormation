@@ -13,6 +13,9 @@
     <body>
         <h1>Team Formation Engine</h1>
         {% block content %}
+        {% if warning %}
+        {{ warning }}
+        {% endif %}
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
