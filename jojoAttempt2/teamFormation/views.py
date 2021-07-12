@@ -4,6 +4,7 @@ from .models import csvUpload
 from .forms import fileForm, colForm, teamSizeForm
 import csv
 from django.http import HttpResponse
+import random
 
 # Create your views here.
 
@@ -24,13 +25,12 @@ def uploadFile(request):
             reader = csv.reader(decoded_file)
             for row in reader:
                 data.append(row)
-
             # Saving form data within the current session
             colNames = data.pop(0)
             #print("names" + str(colNames))  # For verification only
             request.session['colNames'] = colNames # Save column names in session
             request.session['data'] = data # Save the rest of the data in session
-
+            request.session['file'] = decoded_file
             # Go to the next step of the form
             return redirect('/columns/') # Redirect to the next step -> will call pickColumns
 
@@ -54,8 +54,8 @@ def pickColumns(request):
         # DOC: https://docs.djangoproject.com/en/3.2/ref/request-response/
         query = request.POST.copy() # !IMPORTANT
         query.pop('csrfmiddlewaretoken')
-        data = list(query.values()) # Get the answers provided for each of the columns in the initial form
-        print(data)
+        answers = list(query.values()) # Get the answers provided for each of the columns in the initial form
+        request.session['answers'] = answers
         return redirect('/teamsize/')
 
     # Else, we need to create a dynamic form with the columns from the imported csv file
@@ -75,11 +75,17 @@ def teamSize(request):
         data = request.session['data']
         colNames = request.session['colNames']
         size = request.POST.get('size')
+        answers = request.session['answers']
+        col_answer = zip(colNames, answers)
+        request.session['size'] = size
+
+        # Outputting a CSV file
+        ## Doc: https://docs.djangoproject.com/en/3.2/howto/outputting-csv/
 
         return render(request, 'success.html', {
             'data': data,
             'size': size,
-            'colNames': colNames,
+            'colNamesAnswers': col_answer,
         })
 
     # If the form has not been filled yet
@@ -89,6 +95,22 @@ def teamSize(request):
 
     return render(request, 'home.html', {'form': form})
 
+def downloadResult(request):
+
+    response = HttpResponse(
+        content_type='text/csv',
+        headers = {'Content-Disposition': 'attachment; filename="team-formation-results.csv"'},
+    )
+
+    writer = csv.writer(response)
+    writer.writerow(['email', 'team number'])
+    data = request.session['data']
+    size = request.session['size']
+    for row in data:
+        writer.writerow([str(row[3]),str(size)])
+    print(writer)
+
+    return response
 
 ### FURTHER TESTS
 

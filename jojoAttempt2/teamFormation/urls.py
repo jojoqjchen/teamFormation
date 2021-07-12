@@ -6,6 +6,7 @@ urlpatterns = [
     path('', views.uploadFile, name="home"),
     path('columns/', views.pickColumns, name="columns"),
     path('teamsize/', views.teamSize, name="teamSize"),
+    path('download-result/', views.downloadResult, name="downloadResult"),
     #  FOLLOWING ARE FOR TESTING
     path('test-delete/', views.test_delete, name='test_delete'),
     path('test-session/', views.test_session, name='test_session'),

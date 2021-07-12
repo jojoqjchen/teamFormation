@@ -2,11 +2,18 @@
 
 {% block content %}
 <p>Thank you for submitting your teams!</p>
-<p>Column Names: {{colNames}}</p>
+{% for colname, answer in colNamesAnswers %}
+<ul>
+  <li>{{colname}} : {{ answer }}</li>
+</ul>
+{% endfor %}
 {% for field in data%}
   <ul>
     <li>{{field}}</li>
   </ul>
 {% endfor %}
 <p>Team Size: {{size}}</p>
+
+<a href="{% url 'downloadResult' %}">Download the results!</a>
+
 {% endblock %}
