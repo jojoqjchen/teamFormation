@@ -8,7 +8,8 @@ class fileForm(forms.ModelForm):
         fields = '__all__'
 
 class colForm(forms.ModelForm):
-    def __init__(self, columns, *args, **kwargs):
+    # We need to create an __init__ method to dynamically create fields
+    def __init__(self, columns, *args, **kwargs): # columns argument represent the name of the form’s fields
         COL_CHOICES =(
             ("1", "Similar"),
             ("2", "Different"),
