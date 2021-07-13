@@ -8,6 +8,9 @@ import random
 
 # Create your views here.
 
+def home(request):
+    return render(request, 'index.html')
+    
 # Step 1: Upload CSV File
 def uploadFile(request):
 
