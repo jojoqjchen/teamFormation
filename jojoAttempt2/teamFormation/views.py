@@ -10,7 +10,7 @@ import random
 
 def home(request):
     return render(request, 'index.html')
-    
+
 # Step 1: Upload CSV File
 def uploadFile(request):
 
@@ -39,13 +39,13 @@ def uploadFile(request):
 
         else: # Currently, return home template with a WARNING - Incorrect extension
 
-            return render(request, 'home.html', {'form': fileForm(), 'warning': 'Incorrect extension. Please make sure to upload a csv file.'})
+            return render(request, 'team-upload.html', {'form': fileForm(), 'step': '1', 'warning': 'Incorrect extension. Please make sure to upload a csv file.'})
 
     # If the form is not filled -> we create it
     else:
         form = fileForm()
 
-    return render(request, 'home.html', {'form': form})
+    return render(request, 'team-upload.html', {'form': form, 'step': 1})
 
 # Step 2: Pick similar and different columns
 def pickColumns(request):
@@ -66,7 +66,7 @@ def pickColumns(request):
 
         form = colForm(colNames) # See forms.py for further details
 
-    return render(request, 'home.html', {'form': form})
+    return render(request, 'team-upload.html', {'form': form, 'step': '2', 'long': True})
 
  # Step 3: Enter team size
 def teamSize(request):
@@ -96,7 +96,7 @@ def teamSize(request):
 
         form = teamSizeForm()
 
-    return render(request, 'home.html', {'form': form})
+    return render(request, 'team-upload.html', {'form': form, 'step': '3', 'long': True})
 
 def downloadResult(request):
 
