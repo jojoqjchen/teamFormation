@@ -4,7 +4,7 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name = 'home' ),
-    path('upload-teams', views.uploadFile, name="upload-teams"),
+    path('upload-teams/', views.uploadFile, name="upload-teams"),
     path('columns/', views.pickColumns, name="columns"),
     path('teamsize/', views.teamSize, name="teamSize"),
     path('download-result/', views.downloadResult, name="downloadResult"),

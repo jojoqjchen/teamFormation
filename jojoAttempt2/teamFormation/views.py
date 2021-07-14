@@ -39,13 +39,13 @@ def uploadFile(request):
 
         else: # Currently, return home template with a WARNING - Incorrect extension
 
-            return render(request, 'team-upload.html', {'form': fileForm(), 'step': '1', 'warning': 'Incorrect extension. Please make sure to upload a csv file.'})
+            return render(request, 'team-formation-tool.html', {'form': fileForm(), 'step': '0%', 'warning': 'Incorrect extension. Please make sure to upload a csv file.'})
 
     # If the form is not filled -> we create it
     else:
         form = fileForm()
 
-    return render(request, 'team-upload.html', {'form': form, 'step': 1})
+    return render(request, 'team-formation-tool.html', {'form': form, 'step': '0%'})
 
 # Step 2: Pick similar and different columns
 def pickColumns(request):
@@ -66,7 +66,7 @@ def pickColumns(request):
 
         form = colForm(colNames) # See forms.py for further details
 
-    return render(request, 'team-upload.html', {'form': form, 'step': '2', 'long': True})
+    return render(request, 'team-formation-tool.html', {'form': form, 'step': '33%', 'long': True})
 
  # Step 3: Enter team size
 def teamSize(request):
@@ -96,7 +96,7 @@ def teamSize(request):
 
         form = teamSizeForm()
 
-    return render(request, 'team-upload.html', {'form': form, 'step': '3', 'long': True})
+    return render(request, 'team-formation-tool.html', {'form': form, 'step': '67%', 'long': True})
 
 def downloadResult(request):
 

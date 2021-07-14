@@ -44,19 +44,27 @@
           <div class="row">
             <div class="col-md-12 position-relative">
               <div class="p-3 text-center">
-                <h5 class="mt-3 text-primary">Step {{ step }} out of 3</h5>
+                <!-- <h5 class="mt-3 text-primary">Step {{ step }} out of 3</h5> -->
                 {% if warning %}
                 {{ warning }}
                 {% endif %}
-                <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    {% if long %}
+                <!-- FORM: https://www.youtube.com/watch?v=6-XXvUENY_8&ab_channel=Codemy.com -->
+                <div class="form-group">
+                  <form method="post" enctype="multipart/form-data">
+                      {% csrf_token %}
                       {{ form.as_p }}
-                    {% else %}
-                      {{ form }}
-                    {% endif %}
-                    <button type="submit">Next</button>
-                </form>
+                      <button class = "btn btn-secondary" type="submit">Next</button>
+                  </form>
+                </div>
+                <div class="container">
+                  <div class="row justify-space-between py-2">
+                    <div class="col-lg-6 mx-auto">
+                      <div class="progress mb-3">
+                        <div class="progress-bar bg-gradient-primary" role="progressbar" style="width: {{step}}" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               <hr class="vertical dark">
             </div>

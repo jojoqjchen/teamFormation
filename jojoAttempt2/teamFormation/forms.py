@@ -5,7 +5,13 @@ from .models import csvUpload, teamSize, pickCols
 class fileForm(forms.ModelForm):
     class Meta:
         model = csvUpload
-        fields = '__all__'
+        fields = ('csvFile',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['csvFile'].widget.attrs.update({'class': 'form-control'})
+        self.fields['csvFile'].label = "Enter your csv file"
+
 
 class colForm(forms.ModelForm):
     # We need to create an __init__ method to dynamically create fields
@@ -21,6 +27,7 @@ class colForm(forms.ModelForm):
         for i in range(len(column_list)):
             field_name = column_list[i]
             self.fields[field_name] = forms.TypedChoiceField(choices = COL_CHOICES, required=True)
+            self.fields[field_name].widget.attrs.update({'class': 'form-select'})
 
     class Meta:
         model = pickCols
@@ -30,4 +37,9 @@ class colForm(forms.ModelForm):
 class teamSizeForm(forms.ModelForm):
     class Meta:
         model = teamSize
-        fields = '__all__'
+        fields = ('size',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['size'].widget.attrs.update({'class': 'form-control'})
+        self.fields['size'].label = 'Team Size'
