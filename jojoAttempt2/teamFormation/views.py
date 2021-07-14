@@ -5,6 +5,8 @@ from .forms import fileForm, colForm, teamSizeForm
 import csv
 from django.http import HttpResponse
 import random
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 
 # Create your views here.
 
@@ -12,6 +14,7 @@ def home(request):
     return render(request, 'index.html')
 
 # Step 1: Upload CSV File
+@login_required
 def uploadFile(request):
 
     # If the form is filled
@@ -39,13 +42,13 @@ def uploadFile(request):
 
         else: # Currently, return home template with a WARNING - Incorrect extension
 
-            return render(request, 'team-formation-tool.html', {'form': fileForm(), 'step': '0%', 'warning': 'Incorrect extension. Please make sure to upload a csv file.'})
+            return render(request, 'team-formation/team-formation-tool.html', {'form': fileForm(), 'step': '0%', 'warning': 'Incorrect extension. Please make sure to upload a csv file.'})
 
     # If the form is not filled -> we create it
     else:
         form = fileForm()
 
-    return render(request, 'team-formation-tool.html', {'form': form, 'step': '0%'})
+    return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '0%'})
 
 # Step 2: Pick similar and different columns
 def pickColumns(request):
@@ -66,7 +69,7 @@ def pickColumns(request):
 
         form = colForm(colNames) # See forms.py for further details
 
-    return render(request, 'team-formation-tool.html', {'form': form, 'step': '33%', 'long': True})
+    return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '33%', 'long': True})
 
  # Step 3: Enter team size
 def teamSize(request):
@@ -85,7 +88,7 @@ def teamSize(request):
         # Outputting a CSV file
         ## Doc: https://docs.djangoproject.com/en/3.2/howto/outputting-csv/
 
-        return render(request, 'success.html', {
+        return render(request, 'team-formation/success.html', {
             'data': data,
             'size': size,
             'colNamesAnswers': col_answer,
@@ -96,7 +99,7 @@ def teamSize(request):
 
         form = teamSizeForm()
 
-    return render(request, 'team-formation-tool.html', {'form': form, 'step': '67%', 'long': True})
+    return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '67%', 'long': True})
 
 def downloadResult(request):
 
