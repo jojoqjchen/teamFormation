@@ -7,7 +7,10 @@ urlpatterns = [
     path('upload-teams/', views.uploadFile, name="upload-teams"),
     path('columns/', views.pickColumns, name="columns"),
     path('teamsize/', views.teamSize, name="teamSize"),
-    path('download-result/', views.downloadResult, name="downloadResult"),
+    path('download-result-csv/', views.downloadResultCsv, name="downloadResultCsv"),
+    path('download-result-xlsx/', views.downloadResultXlsx, name="downloadResultXlsx"),
+    # path('download-result-pdf/', views.downloadResultPdf, name="downloadResultPdf"),
+
     #  FOLLOWING ARE FOR TESTING
     path('test-delete/', views.test_delete, name='test_delete'),
     path('test-session/', views.test_session, name='test_session'),

@@ -46,7 +46,9 @@
               <div class="p-3 text-center">
                 <h5 class="mt-3 text-primary">Thank you for submitting your teams!</h5>
 
-                <a class = 'btn bg-gradient-primary w-auto me-2' href="{% url 'downloadResult' %}" role='button'>Download the results!</a>
+                <a class = 'btn bg-gradient-primary w-auto me-2' href="{% url 'downloadResultCsv' %}" role='button'>Download the results (csv)!</a>
+                <a class = 'btn bg-gradient-secondary w-auto me-2' href="{% url 'downloadResultXlsx' %}" role='button'>Download the results (Excel)!</a>
+
 
                 <div class="container">
                   <div class="row justify-space-between py-2">
