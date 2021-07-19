@@ -8,7 +8,7 @@ def team_formation_tool(data, columns, useful_indexes, team_size, isCsv = False)
         pp = pd.read_csv(data)# people, pp-mg-sum21.csv
         ppcol = list(pp.columns)
     else: 
-        pp = pd.DataFrame(data)
+        pp = pd.DataFrame(data = data, columns = columns)
         ppcol = columns
     
     # Set up for matching and build ppreport, a report table
@@ -25,13 +25,13 @@ def team_formation_tool(data, columns, useful_indexes, team_size, isCsv = False)
 
     ppreport = pp.copy(deep=True) #deep copy,pp is unchanged
     ppreport['Team']='TBA'
-    ppreport['Similarity']=np.nan
-
+    #ppreport['Similarity']=np.nan
+    
+    
     #prjmat =[] #intended list of project team
     prjmat =[]
     for s in range(int(S)): 
         prjmat.append([])
-        
         
     # Adding students to team iteratively
     
@@ -51,7 +51,7 @@ def team_formation_tool(data, columns, useful_indexes, team_size, isCsv = False)
             prjcopy = prjmat[i].copy()
             prjcopy.append(j)
             tmp = ppc.iloc[prjcopy]
-            ccor=tmp.transpose().corr().sum().sum() #current correlation mattrix sum
+            ccor = tmp.transpose().corr().sum().sum() #current correlation mattrix sum
             if ccor < mcor:
                 mcor = ccor
                 minj = j
@@ -63,7 +63,7 @@ def team_formation_tool(data, columns, useful_indexes, team_size, isCsv = False)
 
         i=i+1
         if i==S: i=0
-
+    
     # Add team number to ppreport
     
     k=0

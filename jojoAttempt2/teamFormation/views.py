@@ -10,6 +10,7 @@ from django.urls import reverse
 import openpyxl
 import os
 import xlwt
+from teamFormationCode.script import team_formation_tool
 
 # from django.template.loader import render_to_string
 # from weasyprint import HTML
@@ -83,6 +84,9 @@ def pickColumns(request):
     instructions = 'Select the characteristics you want to optimize your teams on, or discard as many as you want.'
     colNames = list(request.session['colNames']) # list() may be unnecessary
 
+    for idx, col in enumerate(colNames):
+        colNames[idx] = str(colNames[idx]+' ('+str(idx+1)+')')
+
     # If the form is filled…
     if request.method == 'POST':
         # DOC: https://docs.djangoproject.com/en/3.2/ref/request-response/
@@ -94,7 +98,6 @@ def pickColumns(request):
 
     # Else, we need to create a dynamic form with the columns from the imported csv file
     else:
-
         form = colForm(colNames) # See forms.py for further details
 
     return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '2', 'long': True, 'previous':"upload-teams", 'instructions': instructions})
@@ -131,6 +134,7 @@ def teamSize(request):
 
     return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '3', 'long': True, 'previous': "columns", 'instructions': instructions})
 
+# IDEA: Gather the two "download" views -> i.e. passing the format of the output in the argument
 def downloadResultCsv(request):
 
     response = HttpResponse(
@@ -141,18 +145,18 @@ def downloadResultCsv(request):
     colNames = list(request.session['colNames'])
     data = request.session['data']
     size = request.session['size']
-    colNames.append('team number')
+    answers = request.session['answers']
 
+    indexes = [i for i in range(len(colNames)) if int(answers[i])<3]
+
+    report = team_formation_tool(data,colNames,indexes,int(size),False)
+
+    colNames.append('Team')
     writer = csv.writer(response)
     writer.writerow(colNames) # To update
 
-    for row in data:
-
-        ### ADD IKHLAQ’s CODE HERE
-        team = random.randint(1,int(size))
-        row.append(team)
-        writer.writerow(row)
-    print(writer)
+    for i in range(1,report.shape[0]):
+        writer.writerow(list(report.iloc[i,:]))
 
     return response
 
@@ -164,29 +168,31 @@ def downloadResultXlsx(request):
 
     wb = xlwt.Workbook(encoding='utf-8')
     ws = wb.add_sheet('Teams')
-    row_num = 0
+
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
 
     colNames = list(request.session['colNames'])
     data = request.session['data']
     size = request.session['size']
-    colNames.append('team number')
 
-    for col_num in range(len(colNames)):
-        ws.write(row_num, col_num, colNames[col_num],font_style)
+    answers = request.session['answers']
+
+    indexes = [i for i in range(len(colNames)) if int(answers[i])<3]
+
+    report = team_formation_tool(data,colNames,indexes,int(size),False)
+
+    colNames.append('Team')
+    nCol = len(colNames)
+
+    for col_num in range(nCol):
+        ws.write(0, col_num, colNames[col_num],font_style)
 
     font_style = xlwt.XFStyle()
 
-    for row in data:
-        row_num+=1
-
-        ### ADD IKHLAQ’s CODE HERE
-        team = random.randint(1,int(size))
-        row.append(team)
-
-        for col_num in range(len(row)):
-            ws.write(row_num, col_num, str(row[col_num]), font_style)
+    for i in range(1,report.shape[0]):
+        for col_num in range(nCol):
+            ws.write(i, col_num, str(report.iloc[i,col_num]), font_style)
 
     wb.save(response)
 

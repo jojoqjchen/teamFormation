@@ -24,7 +24,7 @@ class colForm(forms.ModelForm):
 
         super().__init__(*args, **kwargs)
         column_list = columns
-        for i in range(len(column_list)):
+        for i in range(len(column_list)): # IF TWO COLUMNS HAVE THE SAME NAME, UNWANTED BEHAVIOR HAPPENS
             field_name = column_list[i]
             self.fields[field_name] = forms.TypedChoiceField(choices = COL_CHOICES, required=True)
             self.fields[field_name].widget.attrs.update({'class': 'form-select'})

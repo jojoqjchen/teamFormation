@@ -3,21 +3,23 @@ import numpy as np
 
 def team_formation_tool(data, columns, useful_indexes, team_size, isCsv = False):
     # Initialization
-    
+
     if isCsv: ## Needed for the jupyter notebook
         pp = pd.read_csv(data)# people, pp-mg-sum21.csv
         ppcol = list(pp.columns)
-    else: 
-        pp = pd.DataFrame(data)
+    else:
+        pp = pd.DataFrame(data = data, columns = columns)
         ppcol = columns
-    
+        #print(pp.info())
+
     # Set up for matching and build ppreport, a report table
 
     p = range(len(pp))
     pc = list(p)
-    
-    ### NOTE: ppc would take into account only the columns that are not "ignored" by the user! 
+
+    ### NOTE: ppc would take into account only the columns that are not "ignored" by the user!
     ppc = pp[[ppcol[i] for i in useful_indexes]].copy(deep=True)
+    ppc = ppc.astype(int) # IMPORTANT - BY DEFAULT, ALL COLUMNS ARE 'OBJECTS'
 
     N = len(pp)
 
@@ -25,16 +27,16 @@ def team_formation_tool(data, columns, useful_indexes, team_size, isCsv = False)
 
     ppreport = pp.copy(deep=True) #deep copy,pp is unchanged
     ppreport['Team']='TBA'
-    ppreport['Similarity']=np.nan
+    #ppreport['Similarity']=np.nan
+
 
     #prjmat =[] #intended list of project team
     prjmat =[]
-    for s in range(int(S)): 
+    for s in range(int(S)):
         prjmat.append([])
-        
-        
+
     # Adding students to team iteratively
-    
+
     for s in range(S):
         prjmat[s].append(s)
         pc.remove(s)
@@ -51,13 +53,13 @@ def team_formation_tool(data, columns, useful_indexes, team_size, isCsv = False)
             prjcopy = prjmat[i].copy()
             prjcopy.append(j)
             tmp = ppc.iloc[prjcopy]
-            ccor=tmp.transpose().corr().sum().sum() #current correlation mattrix sum
+            ccor = tmp.transpose().corr().sum().sum() #current correlation mattrix sum
             if ccor < mcor:
                 mcor = ccor
                 minj = j
 
         # After loop of all pc
-        if minj != -1: 
+        if minj != -1:
             pc.remove(minj)   # then add to prjmat[i]
             prjmat[i].append(minj)
 
@@ -65,11 +67,11 @@ def team_formation_tool(data, columns, useful_indexes, team_size, isCsv = False)
         if i==S: i=0
 
     # Add team number to ppreport
-    
+
     k=0
     for i in range(S):
         for j in range(len(prjmat[i])):
             ppreport.at[prjmat[i][j], 'Team'] = i #prjmat[i][j]
             k=k+1
-    
+
     return ppreport
