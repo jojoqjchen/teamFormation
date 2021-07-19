@@ -24,6 +24,8 @@ def home(request):
 @login_required
 def uploadFile(request):
 
+    instructions = 'Enter your CSV or Excel file containing the information about the individuals.'
+
     # If the form is filled
     if request.method == 'POST':
         # Validation may go here:
@@ -67,17 +69,18 @@ def uploadFile(request):
 
         else: # Currently, return home template with a WARNING - Incorrect extension
 
-            return render(request, 'team-formation/team-formation-tool.html', {'form': fileForm(), 'step': '0%', 'warning': 'Incorrect extension. Please make sure to upload a csv file.'})
+            return render(request, 'team-formation/team-formation-tool.html', {'form': fileForm(), 'step': '1', 'warning': 'Incorrect extension. Please make sure to upload a CSV or an Excel file.', 'instructions': instructions})
 
     # If the form is not filled -> we create it
     else:
         form = fileForm()
 
-    return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '0%'})
+    return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '1', 'instructions': instructions})
 
 # Step 2: Pick similar and different columns
 def pickColumns(request):
 
+    instructions = 'Select the characteristics you want to optimize your teams on, or discard as many as you want.'
     colNames = list(request.session['colNames']) # list() may be unnecessary
 
     # If the form is filled…
@@ -94,10 +97,12 @@ def pickColumns(request):
 
         form = colForm(colNames) # See forms.py for further details
 
-    return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '33%', 'long': True, 'previous':"upload-teams"})
+    return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '2', 'long': True, 'previous':"upload-teams", 'instructions': instructions})
 
  # Step 3: Enter team size
 def teamSize(request):
+
+    instructions = 'Enter the ideal size for the teams.'
 
     # If the form is filled
     if request.method == 'POST':
@@ -124,7 +129,7 @@ def teamSize(request):
 
         form = teamSizeForm()
 
-    return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '67%', 'long': True, 'previous': "columns"})
+    return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '3', 'long': True, 'previous': "columns", 'instructions': instructions})
 
 def downloadResultCsv(request):
 
@@ -133,12 +138,20 @@ def downloadResultCsv(request):
         headers = {'Content-Disposition': 'attachment; filename="team-formation-results.csv"'},
     )
 
-    writer = csv.writer(response)
-    writer.writerow(['email', 'team number']) # To update
+    colNames = list(request.session['colNames'])
     data = request.session['data']
     size = request.session['size']
+    colNames.append('team number')
+
+    writer = csv.writer(response)
+    writer.writerow(colNames) # To update
+
     for row in data:
-        writer.writerow([str(row[3]),str(size)])
+
+        ### ADD IKHLAQ’s CODE HERE
+        team = random.randint(1,int(size))
+        row.append(team)
+        writer.writerow(row)
     print(writer)
 
     return response
@@ -148,24 +161,29 @@ def downloadResultXlsx(request):
         content_type = 'application/ms-excel',
         headers = {'Content-Disposition': 'attachment; filename="team-formation-results.xls"'}
     )
+
     wb = xlwt.Workbook(encoding='utf-8')
     ws = wb.add_sheet('Teams')
     row_num = 0
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
 
-    columns = ['email', 'team number'] # To update
-
+    colNames = list(request.session['colNames'])
     data = request.session['data']
     size = request.session['size']
+    colNames.append('team number')
 
-    for col_num in range(len(columns)):
-        ws.write(row_num, col_num, columns[col_num],font_style)
+    for col_num in range(len(colNames)):
+        ws.write(row_num, col_num, colNames[col_num],font_style)
 
     font_style = xlwt.XFStyle()
 
     for row in data:
         row_num+=1
+
+        ### ADD IKHLAQ’s CODE HERE
+        team = random.randint(1,int(size))
+        row.append(team)
 
         for col_num in range(len(row)):
             ws.write(row_num, col_num, str(row[col_num]), font_style)

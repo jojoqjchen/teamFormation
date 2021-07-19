@@ -10,7 +10,7 @@ class fileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['csvFile'].widget.attrs.update({'class': 'form-control'})
-        self.fields['csvFile'].label = "Enter your csv file"
+        self.fields['csvFile'].label = "Enter your CSV or Excel file"
 
 
 class colForm(forms.ModelForm):

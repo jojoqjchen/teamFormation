@@ -8,6 +8,8 @@ class csvUpload(models.Model):
     def __str__(self):
         return self.csvFile
 
+
+
 class pickCols(models.Model):
     pass
 
