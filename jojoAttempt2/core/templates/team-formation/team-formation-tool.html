@@ -4,7 +4,8 @@
 
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}
-
+<script src="https://rawgit.com/enyo/dropzone/master/dist/dropzone.js"></script>
+<link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css">
 {% endblock stylesheets %}
 
 {% block body_class %} index-page {% endblock body_class %}
@@ -55,7 +56,9 @@
                 <div class="form-group">
                   <form method="post" enctype="multipart/form-data">
                       {% csrf_token %}
-                      {{ form.as_p }}
+                      <div class="fallback">
+                        {{ form.as_p }}
+                      </div>
                       {% if previous %}
                       <a class="btn btn-secondary" role="button" href ={% url previous %}>Previous</a>
                       {% endif %}

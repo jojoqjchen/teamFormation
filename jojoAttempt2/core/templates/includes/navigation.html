@@ -213,7 +213,7 @@
                 <!-- MENU 2 -->
                 <li class="nav-item dropdown dropdown-hover mx-2">
                   <a class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center" id="dropdownMenuBlocks" data-bs-toggle="dropdown" aria-expanded="false">
-                    Menu 2
+                    Ressources
                     <img src="/static/assets/img/down-arrow-dark.svg" alt="down-arrow" class="arrow ms-1">
                   </a>
                   <ul class="dropdown-menu dropdown-menu-animation dropdown-lg dropdown-lg-responsive p-3 border-radius-lg mt-0 mt-lg-3" aria-labelledby="dropdownMenuBlocks">
@@ -226,23 +226,23 @@
                             </div>
                             <div class="w-100 d-flex align-items-center justify-content-between">
                               <div>
-                                <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Page Sections</h6>
-                                <span class="text-sm">See all sections</span>
+                                <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Input examples</h6>
+                                <span class="text-sm">Select your format</span>
                               </div>
                               <img src="/static/assets/img/down-arrow.svg" alt="down-arrow" class="arrow">
                             </div>
                           </div>
                         </a>
                         <div class="dropdown-menu mt-0 py-3 px-2 mt-3" aria-labelledby="pageSections">
-                          <a class="dropdown-item ps-3 border-radius-md mb-1" href="/page-sections-hero-sections.html">
-                            Page Headers
+                          <a class="dropdown-item ps-3 border-radius-md mb-1" href="/media/media/MSExcel_Example.xlsx">
+                            MS Excel
                           </a>
-                          <a class="dropdown-item ps-3 border-radius-md mb-1" href="/page-sections-features.html">
-                            Features
+                          <a class="dropdown-item ps-3 border-radius-md mb-1" href="/media/media/CSV_Example.csv">
+                            CSV
                           </a>
                         </div>
                       </li>
-                      <li class="nav-item dropdown dropdown-hover dropdown-subitem">
+                      <!-- <li class="nav-item dropdown dropdown-hover dropdown-subitem">
                         <a class="dropdown-item py-2 ps-3 border-radius-md" href="/presentation.html">
                           <div class="d-flex">
                             <div class="icon h-10 me-3 d-flex mt-1">
@@ -469,7 +469,7 @@
                         <a class="dropdown-item ps-3 border-radius-md mb-1" href="/elements-progress-bars.html">
                           Progress Bars
                         </a>
-                      </div>
+                      </div> -->
                     </div>
                   </ul>
                 </li>
@@ -481,7 +481,7 @@
                   </a>
                   <div class="dropdown-menu dropdown-menu-animation dropdown-md p-3 border-radius-lg mt-0 mt-lg-3" aria-labelledby="dropdownMenuAccount">
                     <div class="d-none d-lg-block">
-                      <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center px-0 mt-3">
+                      <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center px-0">
                         <div class="d-inline-block">
                           <div class="icon icon-shape icon-xs border-radius-md bg-gradient-primary text-center me-2 d-flex align-items-center justify-content-center ps-0">
                             <svg width="12px" height="12px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -513,10 +513,10 @@
                       <a href="{% url 'dashboard-home' %}" class="dropdown-item border-radius-md">
                         Profile
                       </a>
-                      {% endif %}
                       <a href="{% url 'logout' %}" class="dropdown-item border-radius-md">
                         Logout
                       </a>
+                      {% endif %}
                     </div>
                     <div class="d-lg-none">
                       <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center px-0">
