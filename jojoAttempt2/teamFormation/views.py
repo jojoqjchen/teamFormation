@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
-from .models import csvUpload
+from .models import csvUpload, numberOfDownloads
 from .forms import fileForm, colForm, teamSizeForm
 import csv
 from django.http import HttpResponse
@@ -11,6 +11,9 @@ import openpyxl
 import os
 import xlwt
 from teamFormationCode.script import team_formation_tool
+from django.contrib.auth.models import User
+from django.db.models import Sum
+
 
 # from django.template.loader import render_to_string
 # from weasyprint import HTML
@@ -19,7 +22,10 @@ from teamFormationCode.script import team_formation_tool
 # Create your views here.
 
 def home(request):
-    return render(request, 'index.html')
+    downloads = numberOfDownloads.objects.all().aggregate(Sum('download'))
+    users = User.objects.all().count()
+    print(downloads['download__sum'],users)
+    return render(request, 'index.html', {'downloads':downloads['download__sum'],'users':users})
 
 # Step 1: Upload CSV File
 @login_required
@@ -79,6 +85,7 @@ def uploadFile(request):
     return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '1', 'instructions': instructions})
 
 # Step 2: Pick similar and different columns
+@login_required
 def pickColumns(request):
 
     instructions = 'Select the characteristics you want to optimize your teams on, or discard as many as you want.'
@@ -103,6 +110,7 @@ def pickColumns(request):
     return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '2', 'long': True, 'previous':"upload-teams", 'instructions': instructions})
 
  # Step 3: Enter team size
+@login_required
 def teamSize(request):
 
     instructions = 'Enter the ideal size for the teams.'
@@ -135,6 +143,7 @@ def teamSize(request):
     return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '3', 'long': True, 'previous': "columns", 'instructions': instructions})
 
 # IDEA: Gather the two "download" views -> i.e. passing the format of the output in the argument
+@login_required
 def downloadResultCsv(request):
 
     response = HttpResponse(
@@ -158,8 +167,13 @@ def downloadResultCsv(request):
     for i in range(1,report.shape[0]):
         writer.writerow(list(report.iloc[i,:]))
 
+    user = numberOfDownloads.objects.get(user = request.user)
+    user.download+=1
+    user.save()
+
     return response
 
+@login_required
 def downloadResultXlsx(request):
     response = HttpResponse(
         content_type = 'application/ms-excel',
@@ -195,6 +209,10 @@ def downloadResultXlsx(request):
             ws.write(i, col_num, str(report.iloc[i,col_num]), font_style)
 
     wb.save(response)
+
+    user = numberOfDownloads.objects.get(user = request.user)
+    user.download+=1
+    user.save()
 
     return response
 
