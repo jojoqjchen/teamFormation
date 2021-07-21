@@ -15,7 +15,7 @@ class fileForm(forms.ModelForm):
 
 class colForm(forms.ModelForm):
     # We need to create an __init__ method to dynamically create fields
-    def __init__(self, columns, *args, **kwargs): # columns argument represent the name of the form’s fields
+    def __init__(self, columns, colNumbers, *args, **kwargs): # columns argument represent the name of the form’s fields
         COL_CHOICES =(
             ("1", "Similar"),
             ("2", "Different"),
@@ -25,8 +25,9 @@ class colForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         column_list = columns
         for i in range(len(column_list)): # IF TWO COLUMNS HAVE THE SAME NAME, UNWANTED BEHAVIOR HAPPENS
+            default = "1" if column_list[i] in colNumbers else "3"
             field_name = column_list[i]
-            self.fields[field_name] = forms.TypedChoiceField(choices = COL_CHOICES, required=True)
+            self.fields[field_name] = forms.TypedChoiceField(choices = COL_CHOICES, required=True, initial = default)
             self.fields[field_name].widget.attrs.update({'class': 'form-select'})
 
     class Meta:

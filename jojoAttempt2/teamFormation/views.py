@@ -90,6 +90,7 @@ def pickColumns(request):
 
     instructions = 'Select the characteristics you want to optimize your teams on, or discard as many as you want.'
     colNames = list(request.session['colNames']) # list() may be unnecessary
+    print(colNames)
     answers = []
 
     for idx, col in enumerate(colNames):
@@ -106,17 +107,17 @@ def pickColumns(request):
 
     # Else, we need to create a dynamic form with the columns from the imported csv file
     else:
-        colNames = request.session['colNames'] 
+        #colNames = request.session['colNames'] # -> colNames defined earlier with unique id
         resCols = []
         row = request.session['data'][0]
         print("row", row)
         for i in range(0, len(colNames)):
-            if row[i].isnumeric():
+            if row[i].isnumeric(): # Instead of masking the columns, why not adding the columns with numerical values?
                 resCols.append(colNames[i])
                 print("col", colNames[i])
-        form = colForm(resCols) # See forms.py for further details
-        
-
+            else:
+                resCols.append('')
+        form = colForm(colNames,resCols) # See forms.py for further details
 
     return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '2', 'long': True, 'previous':"upload-teams", 'instructions': instructions})
 

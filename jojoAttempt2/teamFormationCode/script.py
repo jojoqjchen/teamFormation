@@ -73,5 +73,6 @@ def team_formation_tool(data, columns, useful_indexes, team_size, isCsv = False)
         for j in range(len(prjmat[i])):
             ppreport.at[prjmat[i][j], 'Team'] = i #prjmat[i][j]
             k=k+1
-
+    ppreport = ppreport.sort_values('Team',ascending=True)
+    
     return ppreport
