@@ -103,6 +103,7 @@ def pickColumns(request):
         query.pop('csrfmiddlewaretoken')
         answers = list(query.values()) # Get the answers provided for each of the columns in the initial form
         request.session['answers'] = answers
+        print(answers)
         return redirect('/teamsize/')
 
     # Else, we need to create a dynamic form with the columns from the imported csv file
@@ -168,9 +169,7 @@ def downloadResultCsv(request):
     size = request.session['size']
     answers = request.session['answers']
 
-    indexes = [i for i in range(len(colNames)) if int(answers[i])<3]
-
-    report = team_formation_tool(data,colNames,indexes,int(size),False)
+    report = team_formation_tool(data,colNames,answers,int(size),False)
 
     colNames.append('Team')
     writer = csv.writer(response)
@@ -201,12 +200,10 @@ def downloadResultXlsx(request):
     colNames = list(request.session['colNames'])
     data = request.session['data']
     size = request.session['size']
+    
+    answers = list(request.session['answers'])
 
-    answers = request.session['answers']
-
-    indexes = [i for i in range(len(colNames)) if int(answers[i])<3]
-
-    report = team_formation_tool(data,colNames,indexes,int(size),False)
+    report = team_formation_tool(data,colNames,answers,int(size),False)
 
     colNames.append('Team')
     nCol = len(colNames)

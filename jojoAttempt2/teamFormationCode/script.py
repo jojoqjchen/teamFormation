@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-def team_formation_tool(data, columns, useful_indexes, team_size, isCsv = False):
+def team_formation_tool(data, columns, answers, team_size, isCsv = False):
     # Initialization
 
     if isCsv: ## Needed for the jupyter notebook
@@ -17,12 +17,17 @@ def team_formation_tool(data, columns, useful_indexes, team_size, isCsv = False)
     p = range(len(pp))
     pc = list(p)
 
+    useful_indexes = [i for i in range(len(answers)) if answers[i]!='3']
+
     ### NOTE: ppc would take into account only the columns that are not "ignored" by the user!
     ppc = pp[[ppcol[i] for i in useful_indexes]].copy(deep=True)
     ppc = ppc.astype(int) # IMPORTANT - BY DEFAULT, ALL COLUMNS ARE 'OBJECTS'
 
-    N = len(pp)
+    for idx, i in enumerate(useful_indexes):
+        if answers[i] == '1':
+            ppc.iloc[:,idx] = -1*ppc.iloc[:,idx]
 
+    N = len(pp)
     S = int(np.ceil(N/team_size)) # S is number of teams to be created, approx N/m
 
     ppreport = pp.copy(deep=True) #deep copy,pp is unchanged
@@ -74,5 +79,5 @@ def team_formation_tool(data, columns, useful_indexes, team_size, isCsv = False)
             ppreport.at[prjmat[i][j], 'Team'] = i #prjmat[i][j]
             k=k+1
     ppreport = ppreport.sort_values('Team',ascending=True)
-    
+
     return ppreport
