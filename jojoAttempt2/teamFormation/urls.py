@@ -9,7 +9,7 @@ urlpatterns = [
     path('teamsize/', views.teamSize, name="teamSize"),
     path('download-result-csv/', views.downloadResultCsv, name="downloadResultCsv"),
     path('download-result-xlsx/', views.downloadResultXlsx, name="downloadResultXlsx"),
-    # path('download-result-pdf/', views.downloadResultPdf, name="downloadResultPdf"),
+    path('download-result-pdf/', views.downloadResultPdf, name="downloadResultPdf"),
 
     #  FOLLOWING ARE FOR TESTING
     path('test-delete/', views.test_delete, name='test_delete'),

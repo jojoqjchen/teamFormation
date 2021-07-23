@@ -1,23 +1,27 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
-from .models import csvUpload, numberOfDownloads
-from .forms import fileForm, colForm, teamSizeForm
+from .models import csvUpload, numberOfDownloads # Import the models
+from .forms import fileForm, colForm, teamSizeForm # Import the forms
 import csv
 from django.http import HttpResponse
 import random
-from django.contrib.auth.decorators import login_required
-from django.urls import reverse
+from django.contrib.auth.decorators import login_required # Easily define login requirements for views
+from django.urls import reverse # Generate URLs using the name as defined in views.py
 import openpyxl
 import os
 import xlwt
-from teamFormationCode.script import team_formation_tool
-from django.contrib.auth.models import User
-from django.db.models import Sum
+from teamFormationCode.script import team_formation_tool # Python script to generate teams
+from django.contrib.auth.models import User # Import the base User model
+from django.db.models import Sum # To query the database and sum results
 
+# Below: needed to output PDFs
+import io
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter, inch
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 
-# from django.template.loader import render_to_string
-# from weasyprint import HTML
-# import tempfile
 
 # Create your views here.
 
@@ -200,7 +204,7 @@ def downloadResultXlsx(request):
     colNames = list(request.session['colNames'])
     data = request.session['data']
     size = request.session['size']
-    
+
     answers = list(request.session['answers'])
 
     report = team_formation_tool(data,colNames,answers,int(size),False)
@@ -225,29 +229,46 @@ def downloadResultXlsx(request):
 
     return response
 
-# def downloadResultPdf(request): https://www.youtube.com/watch?v=_zkYICsIbXI&ab_channel=CryceTruly
-#     response = HttpResponse(
-#         content_type = 'application/pdf',
-#         headers = {
-#         'Content-Disposition': 'attachment; filename="team-formation-results.pdf"',
-#         'Content-Transfer-Encoding': 'binary',
-#         }
-#     )
-#
-#     data = request.session['data']
-#
-#     hmtl_string = render_to_string('team-formation/pdf-output.html',{'data': data})
-#     html = HTML(string=html_string)
-#
-#     result = html.write_pdf()
-#
-#     with tempfile.NamedTemporaryFile(delete=True) as output:
-#         output.write(result)
-#         output.flush()
-#         output = open(output.name,'rb')
-#         response .write(output.read())
-#
-#     return response
+def downloadResultPdf(request): #https://www.youtube.com/watch?v=_zkYICsIbXI&ab_channel=CryceTruly
+
+    data = request.session['data']
+    colNames = list(request.session['colNames'])
+    answers = list(request.session['answers'])
+    size = request.session['size']
+
+    report = team_formation_tool(data,colNames,answers,int(size),False)
+    dataWithTeams = [report.columns] + report.values.tolist()
+
+    # Create a file-like buffer to receive PDF data.
+    buffer = io.BytesIO()
+
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+
+    # container for the 'Flowable' objects
+    elements = []
+
+    t=Table(dataWithTeams)
+    t.setStyle(TableStyle([('ALIGN',(1,1),(-2,-2),'RIGHT'),
+    ('TEXTCOLOR',(0,0),(-1,0),colors.Color(253/255, 181/255, 21/255)),
+    ('TEXTCOLOR', (0,1),(-1,-1), colors.Color(0, 50/255, 98/255)),
+    ('VALIGN',(0,0),(0,-1),'MIDDLE'),
+    ('ALIGN',(0,1),(-1,-1),'CENTER'),
+    ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+    ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+    ('FONT',(0,0),(-1,0),'Helvetica-Bold'),
+    ]))
+
+    elements.append(t)
+
+    doc.build(elements)
+
+    buffer.seek(0)
+
+    user = numberOfDownloads.objects.get(user = request.user)
+    user.download+=1
+    user.save()
+
+    return FileResponse(buffer, as_attachment=True, filename='Team-Formation-Results.pdf')
 
 ### FURTHER TESTS
 
