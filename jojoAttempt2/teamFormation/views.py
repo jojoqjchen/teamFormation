@@ -94,35 +94,48 @@ def pickColumns(request):
 
     instructions = 'Select the characteristics you want to optimize your teams on, or discard as many as you want.'
     colNames = list(request.session['colNames']) # list() may be unnecessary
-    print(colNames)
+    # print(colNames)
     answers = []
 
     for idx, col in enumerate(colNames):
-        colNames[idx] = str(colNames[idx]+' ('+str(idx+1)+')')
+        colNames[idx] = str(colNames[idx]+' ('+str(idx+1)+')') # Adding a # to each field -> in case there are two similar fields names
 
     # If the form is filled…
     if request.method == 'POST':
+
         # DOC: https://docs.djangoproject.com/en/3.2/ref/request-response/
         query = request.POST.copy() # !IMPORTANT
-        query.pop('csrfmiddlewaretoken')
-        answers = list(query.values()) # Get the answers provided for each of the columns in the initial form
+        query.pop('csrfmiddlewaretoken') # Removing unwanted information
+        answers_raw = list(query.values()) # Get the answers provided for each of the columns in the initial form
+
+        idxNumericCol = request.session['idxNumericCol']
+        answers = colNames.copy()
+        for i in range(len(colNames)):
+            if i in idxNumericCol:
+                idx = idxNumericCol.index(i)
+                answers[i] = answers_raw[idx]
+            else:
+                answers[i] = "3"
         request.session['answers'] = answers
         print(answers)
         return redirect('/teamsize/')
 
     # Else, we need to create a dynamic form with the columns from the imported csv file
     else:
-        #colNames = request.session['colNames'] # -> colNames defined earlier with unique id
-        resCols = []
+        colNameIsNumeric = [] # Name of columns that contain numbers
+        idxNumericCol = []
         row = request.session['data'][0]
-        print("row", row)
-        for i in range(0, len(colNames)):
-            if row[i].isnumeric(): # Instead of masking the columns, why not adding the columns with numerical values?
-                resCols.append(colNames[i])
-                print("col", colNames[i])
+        # print("row", row)
+
+        for i in range(0, len(colNames)): # For each column
+            if row[i].isnumeric(): # Checking if the cells in the column contain numeric data
+                colNameIsNumeric.append(colNames[i]) # If yes, then add the column name in
+                idxNumericCol.append(i)
+                # print("col", colNames[i])
             else:
-                resCols.append('')
-        form = colForm(colNames,resCols) # See forms.py for further details
+                colNameIsNumeric.append('')
+        request.session['idxNumericCol'] = idxNumericCol
+        form = colForm(colNames,colNameIsNumeric) # See forms.py for further details
 
     return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '2', 'long': True, 'previous':"upload-teams", 'instructions': instructions})
 
@@ -229,6 +242,7 @@ def downloadResultXlsx(request):
 
     return response
 
+@login_required
 def downloadResultPdf(request): #https://www.youtube.com/watch?v=_zkYICsIbXI&ab_channel=CryceTruly
 
     data = request.session['data']
