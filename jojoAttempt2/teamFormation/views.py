@@ -14,13 +14,14 @@ from teamFormationCode.script import team_formation_tool # Python script to gene
 from teamFormationCode.project_first import project_first_teams # Python script to generate teams
 from django.contrib.auth.models import User # Import the base User model
 from django.db.models import Sum # To query the database and sum results
+import pandas as pd
 
 # Below: needed to output PDFs
 import io
 from django.http import FileResponse
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
-from reportlab.lib.pagesizes import letter, inch
+from reportlab.lib.pagesizes import letter, inch, landscape
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 
 
@@ -242,10 +243,15 @@ def downloadResultXlsx(request):
     colNames = list(request.session['colNames'])
     data = request.session['data']
     size = request.session['size']
-
     answers = list(request.session['answers'])
+    algorithm = request.session['algorithm']
+    numberOfProjects = request.session['numberOfProjects']
+    numberOfChoices = request.session['numberOfChoices']
 
-    report = team_formation_tool(data,colNames,answers,int(size),False)
+    if algorithm == '1':
+        report = team_formation_tool(data,colNames,answers,int(size),False)
+    else:
+        report = project_first_teams(data,colNames, int(numberOfProjects), int(size), int(numberOfChoices), False)
 
     colNames.append('Team')
     nCol = len(colNames)
@@ -274,9 +280,28 @@ def downloadResultPdf(request): #https://www.youtube.com/watch?v=_zkYICsIbXI&ab_
     colNames = list(request.session['colNames'])
     answers = list(request.session['answers'])
     size = request.session['size']
+    answers = list(request.session['answers'])
+    algorithm = request.session['algorithm']
+    numberOfProjects = request.session['numberOfProjects']
+    numberOfChoices = request.session['numberOfChoices']
 
-    report = team_formation_tool(data,colNames,answers,int(size),False)
-    dataWithTeams = [report.columns] + report.values.tolist()
+    if algorithm == '1':
+        report = team_formation_tool(data,colNames,answers,int(size),False)
+    else:
+        report = project_first_teams(data,colNames, int(numberOfProjects), int(size), int(numberOfChoices), False)
+
+    # NOTE: Because sometimes there are too many columns/values are too "long"
+    # We need to limit both the max column size and the max number of columns
+    cols = report.columns
+    if len(cols) > 6:
+        data_pd = report.iloc[:,[0,1,2,3,4,-1]]
+        data_pd = data_pd.astype('string')
+        print(data_pd.info())
+        data_pd = data_pd.apply(lambda x: x.str[:10])
+        data_pd.columns = data_pd.columns.to_series().apply(lambda x: x[:10])
+        dataWithTeams = [data_pd.columns]+data_pd.values.tolist()
+    else:
+        dataWithTeams = [cols] + report.values.tolist()
 
     # Create a file-like buffer to receive PDF data.
     buffer = io.BytesIO()

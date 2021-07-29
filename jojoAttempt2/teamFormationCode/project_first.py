@@ -80,5 +80,6 @@ def project_first_teams(data, columns, numberOfProjects, maxTeamSize, numberOfCh
                 # x_res_team[j].append(i)
                 #print("Student :{} is assigned to team {}".format(i,j))
 
+    df = df.sort_values('Team',ascending=True)
 
     return df
