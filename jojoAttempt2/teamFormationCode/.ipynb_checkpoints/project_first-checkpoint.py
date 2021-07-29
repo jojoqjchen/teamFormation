@@ -68,15 +68,19 @@ def project_first_teams(data, columns, numberOfProjects, maxTeamSize, numberOfCh
     
     x_res = res['x']
     x_res = np.floor(x_res+0.5) # In case results are not integers
-    x_res_team = [[] for i in range(m)] # Final result to return: teammates for each project
+    #x_res_team = [[] for i in range(m)] # Final result to return: teammates for each project
     
+                
+    df['Team'] = 'TBA'
     for i in range(n): # for each student
         sub_list = x_res[i*m:(i+1)*m]
         for j in range(m): # we will search its project
             if sub_list[j]>=1:
+                df.at[i, 'Team'] = j+1
                 x_res_team[j].append(i)
                 #print("Student :{} is assigned to team {}".format(i,j))
+
     
-    return x_res_team
+    return df
 
     

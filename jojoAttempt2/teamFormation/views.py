@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from .models import csvUpload, numberOfDownloads # Import the models
-from .forms import fileForm, colForm, teamSizeForm # Import the forms
+from .forms import fileForm, colForm, teamSizeForm, projectFirstParamForm # Import the forms
 import csv
 from django.http import HttpResponse
 import random
@@ -11,6 +11,7 @@ import openpyxl
 import os
 import xlwt
 from teamFormationCode.script import team_formation_tool # Python script to generate teams
+from teamFormationCode.project_first import project_first_teams # Python script to generate teams
 from django.contrib.auth.models import User # Import the base User model
 from django.db.models import Sum # To query the database and sum results
 
@@ -42,12 +43,17 @@ def uploadFile(request):
         # Validation may go here:
         # https://stackoverflow.com/questions/54403638/django-csv-file-validation-in-model-form-clean-method
         form = fileForm(request.POST, request.FILES) # Creating the form -> this allow to check for the correct extension
-        if form.is_valid(): # Will mainly check if the file is CSV -> should enhance it to test size
+
+        query = request.POST.copy() # !IMPORTANT
+        query.pop('csrfmiddlewaretoken') # Removing unwanted information
+        algorithm = list(query.values()) # Get the answers provided for each of the columns in the initial form
+        request.session['algorithm'] = algorithm[0]
+        try:
             extension = os.path.splitext(str(request.FILES['csvFile']))[1]
             file = request.FILES['csvFile']
             data=[]
 
-            ### TO MODIFY - I WANT TO TEST THE EXTENSION BUT NOT WORKING SO USED TRY
+            ### TESTING EXTENSION
             if extension == '.xlsx':
                 wb = openpyxl.load_workbook(file)
                 # getting a particular sheet by name out of many sheets
@@ -68,17 +74,20 @@ def uploadFile(request):
                 reader = csv.reader(decoded_file)
                 for row in reader:
                     data.append(row)
+            else: # Currently, return home template with a WARNING - Incorrect extension
+                return render(request, 'team-formation/team-formation-tool.html', {'form': fileForm(), 'step': '1', 'warning': 'Incorrect extension. Please make sure to upload a CSV or an Excel file.', 'instructions': instructions})
 
-            # Saving form data within the current session
+            ### SAVING FORM DATA IN THE SESSION
             colNames = data.pop(0)
-            #print("names" + str(colNames))  # For verification only
             request.session['colNames'] = colNames # Save column names in session
             request.session['data'] = data # Save the rest of the data in session
-            #request.session['file'] = file
-            # Go to the next step of the form
-            return redirect('/columns/') # Redirect to the next step -> will call pickColumns
 
-        else: # Currently, return home template with a WARNING - Incorrect extension
+            # GOING TO THE NEXT STEP
+            if algorithm[0] == '1':
+                return redirect('/columns/') # Redirect to the next step -> will call pickColumns
+            else:
+                return redirect('/project-first-param/')
+        except: # Currently, return home template with a WARNING - Incorrect extension
 
             return render(request, 'team-formation/team-formation-tool.html', {'form': fileForm(), 'step': '1', 'warning': 'Incorrect extension. Please make sure to upload a CSV or an Excel file.', 'instructions': instructions})
 
@@ -139,6 +148,28 @@ def pickColumns(request):
 
     return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '2', 'long': True, 'previous':"upload-teams", 'instructions': instructions})
 
+@login_required
+def projectFirstParam(request):
+
+    instructions = 'Complete the characteristics of the projects.'
+
+    # If the form is filled
+    if request.method == 'POST':
+
+        numberOfProjects = request.POST.get('numberOfProjects')
+        numberOfChoices = request.POST.get('numberOfChoices')
+        request.session['numberOfProjects'] = numberOfProjects
+        request.session['numberOfChoices'] = numberOfChoices
+
+        return redirect('/teamsize/')
+
+    # If the form has not been filled yet
+    else:
+
+        form = projectFirstParamForm()
+
+    return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '2', 'long': True, 'previous': "upload-teams", 'instructions': instructions})
+
  # Step 3: Enter team size
 @login_required
 def teamSize(request):
@@ -148,22 +179,10 @@ def teamSize(request):
     # If the form is filled
     if request.method == 'POST':
 
-        # Playing with session data
-        data = request.session['data']
-        colNames = request.session['colNames']
         size = request.POST.get('size')
-        answers = request.session['answers']
-        col_answer = zip(colNames, answers)
         request.session['size'] = size
 
-        # Outputting a CSV file
-        ## Doc: https://docs.djangoproject.com/en/3.2/howto/outputting-csv/
-
-        return render(request, 'team-formation/success.html', {
-            'data': data,
-            'size': size,
-            'colNamesAnswers': col_answer,
-        })
+        return render(request, 'team-formation/success.html')
 
     # If the form has not been filled yet
     else:
@@ -185,8 +204,14 @@ def downloadResultCsv(request):
     data = request.session['data']
     size = request.session['size']
     answers = request.session['answers']
+    algorithm = request.session['algorithm']
+    numberOfProjects = request.session['numberOfProjects']
+    numberOfChoices = request.session['numberOfChoices']
 
-    report = team_formation_tool(data,colNames,answers,int(size),False)
+    if algorithm == '1':
+        report = team_formation_tool(data,colNames,answers,int(size),False)
+    else:
+        report = project_first_teams(data,colNames, int(numberOfProjects), int(size), int(numberOfChoices), False)
 
     colNames.append('Team')
     writer = csv.writer(response)
