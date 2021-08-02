@@ -218,7 +218,7 @@ def downloadResultCsv(request):
     writer = csv.writer(response)
     writer.writerow(colNames) # To update
 
-    for i in range(1,report.shape[0]):
+    for i in range(0,report.shape[0]):
         writer.writerow(list(report.iloc[i,:]))
 
     user = numberOfDownloads.objects.get(user = request.user)
@@ -261,9 +261,9 @@ def downloadResultXlsx(request):
 
     font_style = xlwt.XFStyle()
 
-    for i in range(1,report.shape[0]):
+    for i in range(0,report.shape[0]):
         for col_num in range(nCol):
-            ws.write(i, col_num, str(report.iloc[i,col_num]), font_style)
+            ws.write(i+1, col_num, str(report.iloc[i,col_num]), font_style)
 
     wb.save(response)
 
