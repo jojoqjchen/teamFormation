@@ -189,8 +189,9 @@ def teamSize(request):
     else:
 
         form = teamSizeForm()
+    previous = "columns" if request.session['algorithm'] == "1" else "projectFirstParam"
 
-    return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '3', 'long': True, 'previous': "columns", 'instructions': instructions})
+    return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '3', 'long': True, 'previous': previous, 'instructions': instructions})
 
 # IDEA: Gather the two "download" views -> i.e. passing the format of the output in the argument
 @login_required
@@ -335,7 +336,8 @@ def downloadResultPdf(request): #https://www.youtube.com/watch?v=_zkYICsIbXI&ab_
     # p2 = Paragraph("2nd choice allocation: {}".format(perc_choice2), style=None)
     # p3 = Paragraph("3rd choice allocation: {}".format(perc_choice3), style=None)
     #
-    # elements.append(t)
+
+    elements.append(t)
     # elements.append(p1)
     # elements.append(p2)
     # elements.append(p3)
