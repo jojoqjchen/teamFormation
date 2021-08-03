@@ -15,15 +15,12 @@
         <div class="row">
           <div class="col-lg-7 text-center mx-auto">
             <h1 class="text-white pt-3 mt-n5">
-              Forming Teams Instantly
+              Team Formation Engine
             </h1>
             <p class="lead text-white mt-3">
-              <b>Professors & event planners:</b>
-              <br>Form optimal teams for your project-based courses and hackathons.
+              Form optimal teams for your project-based courses and events <b>instantly</b>.
             </p>
-            <p class="lead text-white mt-3">
-              You already have a team survey? <a class="text-primary" href="{% url 'upload-teams' %}">Start forming teams</a>.
-            </p>
+            <a href="{% url 'upload-teams' %}" class="btn btn-cta mb-0 me-2" target="_blank">Start Forming Teams</a>
           </div>
         </div>
       </div>
@@ -45,15 +42,15 @@
     </div>
   </header>
   <section class="pt-3 pb-4" id="count-stats">
-    <div class="container">
+    <div class="container" id="stats">
       <div class="row">
         <div class="col-lg-9 z-index-2 border-radius-xl mt-n10 mx-auto py-3 blur shadow-blur">
           <div class="row">
             <div class="col-md-4 position-relative">
               <div class="p-3 text-center">
-                <h1 class="text-gradient text-primary">< <span id="state1" countTo="30"></span>s</h1>
-                <h5 class="mt-3">To generate teams.</h5>
-                <p class="text-sm">From registration to the download of your results.</p>
+                <h1 class="text-gradient text-primary"> <span id="state1" countTo="30"></span>s</h1>
+                <h5 class="mt-3">To generate teams</h5>
+                <p class="text-sm">Eliminate the stress and time of manually forming teams.</p>
               </div>
               <hr class="vertical dark">
             </div>
@@ -61,7 +58,7 @@
               <div class="p-3 text-center">
                 <h1 class="text-gradient text-primary"> <span id="state2" countTo="{{downloads}}">0</span></h1>
                 <h5 class="mt-3">Results downloaded!</h5>
-                <p class="text-sm">Choose between 4 research-backed team formation options.</p>
+                <p class="text-sm">Download results in Excel, CSV, or PDF format.</p>
               </div>
               <hr class="vertical dark">
             </div>
@@ -69,7 +66,7 @@
               <div class="p-3 text-center">
                 <h1 class="text-gradient text-primary">Free</h1>
                 <h5 class="mt-3">Forever.</h5>
-                <p class="text-sm">You only need an email address. <br><a href = "#Tutorial">Click here to get started</a>.</p>
+                <p class="text-sm">This team formation tool is available to all at no cost.</p>
               </div>
             </div>
           </div>
@@ -119,6 +116,9 @@
             <h6 class="text-secondary">You can select to download the final team results in a PDF, CSV, or MS Excel format.</h6>
           </div>
         </div>
+      </div>
+      <div class="text-center">
+      <a href="{% url 'upload-teams' %}" class="btn btn-primary mb-0 me-2 cta" target="_blank">Get Started</a>
       </div>
     </div>
   <!-- TEMPLATES -->

@@ -19,10 +19,10 @@ import pandas as pd
 # Below: needed to output PDFs
 import io
 from django.http import FileResponse
-from reportlab.pdfgen import canvas
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import letter, inch, landscape
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+# from reportlab.pdfgen import canvas
+# from reportlab.lib import colors
+# from reportlab.lib.pagesizes import letter, inch, landscape
+# from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 
 
 # Create your views here.
