@@ -40,8 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'teamFormation',
-    'formtools',
-    'crispy_forms',
+    # 'formtools',
+    # 'crispy_forms',
     'dashboard'
 ]
 

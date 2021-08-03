@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import scipy as sc
 from scipy import optimize
+import cvxpy as cp
 
 def project_first_teams(data, columns, numberOfProjects, maxTeamSize, numberOfChoices = 3, isCsv = False):
     # Initialization, Reading the survey information
@@ -63,23 +64,46 @@ def project_first_teams(data, columns, numberOfProjects, maxTeamSize, numberOfCh
     ## BOUNDS FOR THE ANSWERS
     lb, ub = 0, 1 # Lower and upper bound for the decision variables
 
-    ## OPTIMIZATION - Objective: min cTx. Cf doc: https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.linprog.html#scipy.optimize.linprog
-    res = sc.optimize.linprog(c = c_choices, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=(lb,ub), method='simplex', callback=None, options=None, x0=None)
-
-    x_res = res['x']
-    x_res = np.floor(x_res+0.5) # In case results are not integers
-    #x_res_team = [[] for i in range(m)] # Final result to return: teammates for each project
-
-
+    ## MILP Programming - Using CVXPY
+    ### Documentation: https://www.cvxpy.org/index.html
+    ### Inspiration: https://towardsdatascience.com/integer-programming-in-python-1cbdfa240df2
+    
+    x = cp.Variable((n*m,1), integer=True) # Defining variables x - integer
+    
+    ### OPTIMIZATION PROBLEM
+    
+    objective = cp.Minimize(x.T @ c_choices) # Minimize the weights of the allocations. 
+    
+    ### CONSTRAINTS
+    
+    team_size_constraint = A_ub @ x <= b_ub # Each team must have at most t participants
+    assignments_constraint = A_eq @ x == b_eq # Each participant must be assigned to 1 project
+    x_lb = 0<=x # Binary var
+    x_ub = 1>=x # Binary var
+    constraints = [team_size_constraint, assignments_constraint, x_lb, x_ub] # All constraints
+    
+    ### SOLVER
+    
+    opti_problem = cp.Problem(objective,constraints)
+    opti_problem.solve(solver=cp.GLPK_MI)
+    
     df['Team'] = 'TBA'
     for i in range(n): # for each student
-        sub_list = x_res[i*m:(i+1)*m]
+        sub_list = x.value[i*m:(i+1)*m]
         for j in range(m): # we will search its project
             if sub_list[j]>=1:
                 df.at[i, 'Team'] = j+1
-                # x_res_team[j].append(i)
-                #print("Student :{} is assigned to team {}".format(i,j))
 
     df = df.sort_values('Team',ascending=True)
+
+    
+    ### LEGACY - IN CASE CVXPY DOES NOT WORK
+    
+    ## OPTIMIZATION - Objective: min cTx. Cf doc: https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.linprog.html#scipy.optimize.linprog
+    #res = sc.optimize.linprog(c = c_choices, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=(lb,ub), method='simplex', callback=None, options=None, x0=None)
+
+    #x_res = res['x']
+    #x_res = np.floor(x_res+0.5) # In case results are not integers
+    #x_res_team = [[] for i in range(m)] # Final result to return: teammates for each project
 
     return df

@@ -22,7 +22,7 @@ from django.http import FileResponse
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter, inch, landscape
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
 
 
 # Create your views here.
@@ -293,8 +293,9 @@ def downloadResultPdf(request): #https://www.youtube.com/watch?v=_zkYICsIbXI&ab_
     # NOTE: Because sometimes there are too many columns/values are too "long"
     # We need to limit both the max column size and the max number of columns
     cols = report.columns
-    if len(cols) > 6:
-        data_pd = report.iloc[:,[0,1,2,3,4,-1]]
+    print(cols)
+    if len(cols) > 7:
+        data_pd = report.iloc[:,[0,1,2,3,4,5,-1]]
         data_pd = data_pd.astype('string')
         print(data_pd.info())
         data_pd = data_pd.apply(lambda x: x.str[:10])
@@ -322,7 +323,22 @@ def downloadResultPdf(request): #https://www.youtube.com/watch?v=_zkYICsIbXI&ab_
     ('FONT',(0,0),(-1,0),'Helvetica-Bold'),
     ]))
 
-    elements.append(t)
+    # # First, second and third choices percentages
+    # n = len(report)
+    # print(n)
+    # print(len(report[report['Team']==report['Choice 1']]))
+    # perc_choice1 = len(report[report['Team']==report['Choice 1']])/n
+    # perc_choice2 = len(report[report['Team']==report['Choice 2']])/n
+    # perc_choice3 = len(report[report['Team']==report['Choice 3']])/n
+    #
+    # p1 = Paragraph("1st choice allocation: {}".format(perc_choice1), style=None)
+    # p2 = Paragraph("2nd choice allocation: {}".format(perc_choice2), style=None)
+    # p3 = Paragraph("3rd choice allocation: {}".format(perc_choice3), style=None)
+    #
+    # elements.append(t)
+    # elements.append(p1)
+    # elements.append(p2)
+    # elements.append(p3)
 
     doc.build(elements)
 
