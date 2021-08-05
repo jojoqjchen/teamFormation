@@ -283,12 +283,12 @@ def downloadResultPdf(request): #https://www.youtube.com/watch?v=_zkYICsIbXI&ab_
     size = request.session['size']
     answers = list(request.session['answers'])
     algorithm = request.session['algorithm']
-    numberOfProjects = request.session['numberOfProjects']
-    numberOfChoices = request.session['numberOfChoices']
 
     if algorithm == '1':
         report = team_formation_tool(data,colNames,answers,int(size),False)
     else:
+        numberOfProjects = request.session['numberOfProjects']
+        numberOfChoices = request.session['numberOfChoices']
         report = project_first_teams(data,colNames, int(numberOfProjects), int(size), int(numberOfChoices), False)
 
     # NOTE: Because sometimes there are too many columns/values are too "long"
