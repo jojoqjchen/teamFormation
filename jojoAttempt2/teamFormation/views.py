@@ -19,10 +19,10 @@ import pandas as pd
 # Below: needed to output PDFs
 import io
 from django.http import FileResponse
-# from reportlab.pdfgen import canvas
-# from reportlab.lib import colors
-# from reportlab.lib.pagesizes import letter, inch, landscape
-# from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter, inch, landscape
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
 
 
 # Create your views here.
@@ -189,8 +189,9 @@ def teamSize(request):
     else:
 
         form = teamSizeForm()
+    previous = "columns" if request.session['algorithm'] == "1" else "projectFirstParam"
 
-    return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '3', 'long': True, 'previous': "columns", 'instructions': instructions})
+    return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '3', 'long': True, 'previous': previous, 'instructions': instructions})
 
 # IDEA: Gather the two "download" views -> i.e. passing the format of the output in the argument
 @login_required
@@ -206,19 +207,19 @@ def downloadResultCsv(request):
     size = request.session['size']
     answers = request.session['answers']
     algorithm = request.session['algorithm']
-    numberOfProjects = request.session['numberOfProjects']
-    numberOfChoices = request.session['numberOfChoices']
 
     if algorithm == '1':
         report = team_formation_tool(data,colNames,answers,int(size),False)
     else:
+        numberOfProjects = request.session['numberOfProjects']
+        numberOfChoices = request.session['numberOfChoices']
         report = project_first_teams(data,colNames, int(numberOfProjects), int(size), int(numberOfChoices), False)
 
     colNames.append('Team')
     writer = csv.writer(response)
     writer.writerow(colNames) # To update
 
-    for i in range(1,report.shape[0]):
+    for i in range(0,report.shape[0]):
         writer.writerow(list(report.iloc[i,:]))
 
     user = numberOfDownloads.objects.get(user = request.user)
@@ -245,12 +246,12 @@ def downloadResultXlsx(request):
     size = request.session['size']
     answers = list(request.session['answers'])
     algorithm = request.session['algorithm']
-    numberOfProjects = request.session['numberOfProjects']
-    numberOfChoices = request.session['numberOfChoices']
 
     if algorithm == '1':
         report = team_formation_tool(data,colNames,answers,int(size),False)
     else:
+        numberOfProjects = request.session['numberOfProjects']
+        numberOfChoices = request.session['numberOfChoices']
         report = project_first_teams(data,colNames, int(numberOfProjects), int(size), int(numberOfChoices), False)
 
     colNames.append('Team')
@@ -261,9 +262,9 @@ def downloadResultXlsx(request):
 
     font_style = xlwt.XFStyle()
 
-    for i in range(1,report.shape[0]):
+    for i in range(0,report.shape[0]):
         for col_num in range(nCol):
-            ws.write(i, col_num, str(report.iloc[i,col_num]), font_style)
+            ws.write(i+1, col_num, str(report.iloc[i,col_num]), font_style)
 
     wb.save(response)
 
@@ -282,19 +283,20 @@ def downloadResultPdf(request): #https://www.youtube.com/watch?v=_zkYICsIbXI&ab_
     size = request.session['size']
     answers = list(request.session['answers'])
     algorithm = request.session['algorithm']
-    numberOfProjects = request.session['numberOfProjects']
-    numberOfChoices = request.session['numberOfChoices']
 
     if algorithm == '1':
         report = team_formation_tool(data,colNames,answers,int(size),False)
     else:
+        numberOfProjects = request.session['numberOfProjects']
+        numberOfChoices = request.session['numberOfChoices']
         report = project_first_teams(data,colNames, int(numberOfProjects), int(size), int(numberOfChoices), False)
 
     # NOTE: Because sometimes there are too many columns/values are too "long"
     # We need to limit both the max column size and the max number of columns
     cols = report.columns
-    if len(cols) > 6:
-        data_pd = report.iloc[:,[0,1,2,3,4,-1]]
+    print(cols)
+    if len(cols) > 7:
+        data_pd = report.iloc[:,[0,1,2,3,4,5,-1]]
         data_pd = data_pd.astype('string')
         print(data_pd.info())
         data_pd = data_pd.apply(lambda x: x.str[:10])
@@ -322,7 +324,23 @@ def downloadResultPdf(request): #https://www.youtube.com/watch?v=_zkYICsIbXI&ab_
     ('FONT',(0,0),(-1,0),'Helvetica-Bold'),
     ]))
 
+    # # First, second and third choices percentages
+    # n = len(report)
+    # print(n)
+    # print(len(report[report['Team']==report['Choice 1']]))
+    # perc_choice1 = len(report[report['Team']==report['Choice 1']])/n
+    # perc_choice2 = len(report[report['Team']==report['Choice 2']])/n
+    # perc_choice3 = len(report[report['Team']==report['Choice 3']])/n
+    #
+    # p1 = Paragraph("1st choice allocation: {}".format(perc_choice1), style=None)
+    # p2 = Paragraph("2nd choice allocation: {}".format(perc_choice2), style=None)
+    # p3 = Paragraph("3rd choice allocation: {}".format(perc_choice3), style=None)
+    #
+
     elements.append(t)
+    # elements.append(p1)
+    # elements.append(p2)
+    # elements.append(p3)
 
     doc.build(elements)
 
