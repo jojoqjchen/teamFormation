@@ -15,15 +15,12 @@
         <div class="row">
           <div class="col-lg-7 text-center mx-auto">
             <h1 class="text-white pt-3 mt-n5">
-              Forming Teams Instantly
+              Team Formation Engine
             </h1>
             <p class="lead text-white mt-3">
-              <b>Professors & event planners:</b>
-              <br>Form optimal teams for your project-based courses and hackathons.
+              Form optimal teams for your project-based courses and events <b>instantly</b>.
             </p>
-            <p class="lead text-white mt-3">
-              You already have a team survey? <a class="text-primary" href="{% url 'upload-teams' %}">Start forming teams</a>.
-            </p>
+            <a href="{% url 'upload-teams' %}" class="btn btn-cta mb-0 me-2 target="_blank">Start Forming Teams</a>
           </div>
         </div>
       </div>
@@ -45,7 +42,7 @@
     </div>
   </header>
   <section class="pt-3 pb-4" id="count-stats">
-    <div class="container">
+    <div class="container" id="stats">
       <div class="row">
         <div class="col-lg-9 z-index-2 border-radius-xl mt-n10 mx-auto py-3 blur shadow-blur">
           <div class="row">
@@ -53,7 +50,7 @@
               <div class="p-3 text-center">
                 <h1 class="text-gradient text-primary">< <span id="state1" countTo="30"></span>s</h1>
                 <h5 class="mt-3">To generate teams.</h5>
-                <p class="text-sm">From registration to the download of your results.</p>
+                <p class="text-sm">Eliminate the stress and time of manually forming teams.</p>
               </div>
               <hr class="vertical dark">
             </div>
@@ -61,7 +58,7 @@
               <div class="p-3 text-center">
                 <h1 class="text-gradient text-primary"> <span id="state2" countTo="{{downloads}}">0</span></h1>
                 <h5 class="mt-3">Results downloaded!</h5>
-                <p class="text-sm">Choose between 4 research-backed team formation options.</p>
+                <p class="text-sm">Download results in Excel, CSV, or PDF format.</p>
               </div>
               <hr class="vertical dark">
             </div>
@@ -69,7 +66,7 @@
               <div class="p-3 text-center">
                 <h1 class="text-gradient text-primary">Free</h1>
                 <h5 class="mt-3">Forever.</h5>
-                <p class="text-sm">You only need an email address. <br><a href = "#Tutorial">Click here to get started</a>.</p>
+                <p class="text-sm">This team formation tool is available to all at no cost.</a>.</p>
               </div>
             </div>
           </div>
@@ -85,7 +82,7 @@
       <div class="row">
         <div class="row text-center my-sm-5 mt-5">
           <div class="col-lg-6 mx-auto">
-            <h2 class="text-primary text-gradient mb-0">How it works</h2>
+            <h2 class="text-primary text-gradient mb-0">How it Works</h2>
             <!-- <h2 class="">With our coded pages</h2>
             <p class="lead">The easiest way to get started is to use one of our <br /> pre-built example pages. </p> -->
           </div>
@@ -98,35 +95,38 @@
         <!-- STEP 1 -->
         <div class="col-md-4 mx-auto mt-md-0 mt-3">
           <div class="" style="top:100px !important">
-            <h4 class="">Step 1: Gather basic information about the participants.</h4>
-            <h6 class="text-secondary">This will be used by our algorithm to form the best possible teams, depending on your objective.
-              <br> You can use any of our templates below, or your own.
-            <br><i> Make sure to use numeric values for each of the characteristics you are trying to measure. We recommand using Google Form to gather the information.</i></h6>
+            <h4 class="">Step 1: Gather information about the participants.</h4>
+            <h6 class="text-secondary"> This data will be used by our algorithm to form the best possible teams.
+              <br> See the templates below for some examples of how to format your questionaire and CSV file.  
+            <br><br><i>*Make sure to use numeric values for each characteristic. We recommand using Google Form to gather the information, then exporting the results as a CSV file.</i></h6>
           </div>
         </div>
         <!-- STEP 2 -->
         <div class="col-md-4 mx-auto mt-md-0 mt-3">
           <div class="" style="top:100px !important">
-            <h4 class="">Step 2: Upload your data and fill out our 30-second questionnaire.</h4>
+            <h4 class="">Step 2: Upload your data and fill out our 10-second questionnaire.</h4>
             <h6 class="text-secondary"> Once you have uploaded the data obtained during Step 1, you will be prompted some questions that will help the algorithm determine the best team for you.
-            <br><i>You will be asked your ideal team size, and whether you want some characteristics to be similar across the teammates, different, or simply ignored.</i></h6>
+            <br><i>You will be asked your ideal team size, and whether you want every characteristic to be similar across the teammates, different, or simply ignored.</i></h6>
           </div>
         </div>
         <!-- STEP 3 -->
         <div class="col-md-4 mx-auto mt-md-0 mt-3">
           <div class="" style="top:100px !important">
             <h4 class="">Step 3: Download and share the results.</h4>
-            <h6 class="text-secondary">You can select to download the final team results in a PDF, CSV, or MS Excel format.</h6>
+            <h6 class="text-secondary">Once your teams have been generated, you can download the results in a PDF, CSV, or MS Excel format.</h6>
           </div>
         </div>
+        
       </div>
+      
+
     </div>
   <!-- TEMPLATES -->
     <div class="container" id = "Template">
       <div class="row">
         <div class="row text-center my-sm-5 mt-5">
           <div class="col-lg-6 mx-auto">
-            <h2 class="text-primary text-gradient mb-0">Our templates</h2>
+            <h2 class="text-primary text-gradient mb-0">Our Templates</h2>
           </div>
         </div>
       </div>

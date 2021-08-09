@@ -3076,10 +3076,15 @@ fieldset:disabled .btn {
   opacity: 0.65;
 }
 
+.cta {
+  text-align: center; 
+}
+
 .btn-primary {
   color: #fff;
   background-color: #cb0c9f;
   border-color: #cb0c9f;
+  display: inline-block;
 }
 
 .btn-primary:hover {
@@ -21509,4 +21514,8 @@ pre[class*="language-"] {
 
 .token.entity {
   cursor: help;
+}
+
+#stats {
+  padding-top: 5rem;
 }
