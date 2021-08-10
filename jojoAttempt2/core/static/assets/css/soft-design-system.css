@@ -3132,6 +3132,7 @@ fieldset:disabled .btn {
   color: #000;
   background-color: #8392AB;
   border-color: #8392AB;
+  margin-top: 1rem;
 }
 
 .btn-secondary:hover {
@@ -21520,4 +21521,14 @@ pre[class*="language-"] {
 
 #stats {
   padding-top: 5rem;
+}
+
+.template-btns {
+  display:flex;
+  flex-wrap: wrap;
+  align-content: space-between;
+}
+
+.mid {
+  text-align: center;
 }
