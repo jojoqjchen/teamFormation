@@ -27,7 +27,9 @@ SECRET_KEY = 'django-insecure-utuidlc2&*1m6p^kjutz()@d7(%qgm)-sl-xaurq9r*nx#+_ey
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'community.pythonanywhere.com',
+]
 
 
 # Application definition
@@ -40,8 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'teamFormation',
-    # 'formtools',
-    # 'crispy_forms',
     'dashboard'
 ]
 
