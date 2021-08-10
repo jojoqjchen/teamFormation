@@ -29,6 +29,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'community.pythonanywhere.com',
+    'ix2021teamformation.pythonanywhere.com',
     '127.0.0.1',
 ]
 
