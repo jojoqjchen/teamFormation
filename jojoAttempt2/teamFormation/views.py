@@ -205,10 +205,10 @@ def downloadResultCsv(request):
     colNames = list(request.session['colNames'])
     data = request.session['data']
     size = request.session['size']
-    answers = request.session['answers']
     algorithm = request.session['algorithm']
 
     if algorithm == '1':
+        answers = request.session['answers']
         report = team_formation_tool(data,colNames,answers,int(size),False)
     else:
         numberOfProjects = request.session['numberOfProjects']
@@ -244,10 +244,10 @@ def downloadResultXlsx(request):
     colNames = list(request.session['colNames'])
     data = request.session['data']
     size = request.session['size']
-    answers = list(request.session['answers'])
     algorithm = request.session['algorithm']
 
     if algorithm == '1':
+        answers = list(request.session['answers'])
         report = team_formation_tool(data,colNames,answers,int(size),False)
     else:
         numberOfProjects = request.session['numberOfProjects']
@@ -279,12 +279,11 @@ def downloadResultPdf(request): #https://www.youtube.com/watch?v=_zkYICsIbXI&ab_
 
     data = request.session['data']
     colNames = list(request.session['colNames'])
-    answers = list(request.session['answers'])
     size = request.session['size']
-    answers = list(request.session['answers'])
     algorithm = request.session['algorithm']
 
     if algorithm == '1':
+        answers = list(request.session['answers'])
         report = team_formation_tool(data,colNames,answers,int(size),False)
     else:
         numberOfProjects = request.session['numberOfProjects']
