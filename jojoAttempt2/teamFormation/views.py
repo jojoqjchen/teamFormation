@@ -55,7 +55,7 @@ def uploadFile(request):
             data=[]
 
             ### TESTING EXTENSION
-            if extension == '.xlsx':
+            if (extension == '.xls') or (extension == '.xlsx'):
                 wb = openpyxl.load_workbook(file)
                 # getting a particular sheet by name out of many sheets
                 sheets = wb.sheetnames
@@ -76,7 +76,7 @@ def uploadFile(request):
                 for row in reader:
                     data.append(row)
             else: # Currently, return home template with a WARNING - Incorrect extension
-                return render(request, 'team-formation/team-formation-tool.html', {'form': fileForm(), 'step': '1', 'warning': 'Incorrect extension. Please make sure to upload a CSV or an Excel file.', 'instructions': instructions})
+                return render(request, 'team-formation/team-formation-tool.html', {'form': fileForm(), 'step': '1', 'warning': 'Incorrect extension. Please make sure to upload a CSV or an MS Excel (.xlsx) file.', 'instructions': instructions})
 
             ### SAVING FORM DATA IN THE SESSION
             colNames = data.pop(0)
