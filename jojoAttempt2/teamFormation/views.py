@@ -55,7 +55,7 @@ def uploadFile(request):
             data=[]
 
             ### TESTING EXTENSION
-            if extension == '.xlsx':
+            if (extension == '.xls') or (extension == '.xlsx'):
                 wb = openpyxl.load_workbook(file)
                 # getting a particular sheet by name out of many sheets
                 sheets = wb.sheetnames
@@ -76,7 +76,7 @@ def uploadFile(request):
                 for row in reader:
                     data.append(row)
             else: # Currently, return home template with a WARNING - Incorrect extension
-                return render(request, 'team-formation/team-formation-tool.html', {'form': fileForm(), 'step': '1', 'warning': 'Incorrect extension. Please make sure to upload a CSV or an Excel file.', 'instructions': instructions})
+                return render(request, 'team-formation/team-formation-tool.html', {'form': fileForm(), 'step': '1', 'warning': 'Incorrect extension. Please make sure to upload a CSV or an MS Excel (.xlsx) file.', 'instructions': instructions})
 
             ### SAVING FORM DATA IN THE SESSION
             colNames = data.pop(0)
@@ -205,10 +205,10 @@ def downloadResultCsv(request):
     colNames = list(request.session['colNames'])
     data = request.session['data']
     size = request.session['size']
-    answers = request.session['answers']
     algorithm = request.session['algorithm']
 
     if algorithm == '1':
+        answers = request.session['answers']
         report = team_formation_tool(data,colNames,answers,int(size),False)
     else:
         numberOfProjects = request.session['numberOfProjects']
@@ -244,10 +244,10 @@ def downloadResultXlsx(request):
     colNames = list(request.session['colNames'])
     data = request.session['data']
     size = request.session['size']
-    answers = list(request.session['answers'])
     algorithm = request.session['algorithm']
 
     if algorithm == '1':
+        answers = list(request.session['answers'])
         report = team_formation_tool(data,colNames,answers,int(size),False)
     else:
         numberOfProjects = request.session['numberOfProjects']
@@ -279,12 +279,11 @@ def downloadResultPdf(request): #https://www.youtube.com/watch?v=_zkYICsIbXI&ab_
 
     data = request.session['data']
     colNames = list(request.session['colNames'])
-    answers = list(request.session['answers'])
     size = request.session['size']
-    answers = list(request.session['answers'])
     algorithm = request.session['algorithm']
 
     if algorithm == '1':
+        answers = list(request.session['answers'])
         report = team_formation_tool(data,colNames,answers,int(size),False)
     else:
         numberOfProjects = request.session['numberOfProjects']

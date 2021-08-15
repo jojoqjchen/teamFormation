@@ -3,21 +3,22 @@
 {% block title %} Presentation {% endblock title %}
 
 <!-- Specific CSS goes HERE -->
-{% block stylesheets %}{% endblock stylesheets %}
+{% block stylesheets %}
+{% endblock stylesheets %}
 
 {% block body_class %} index-page {% endblock body_class %}
 
 {% block content %}
 
   <header class="header-2">
-    <div class="page-header section-height-75 relative" style="background-image: url('/static/assets/img/curved-images/curved.jpg')">
+    <div class="page-header section-height-75 relative overlay" style="background-image: url('/static/assets/img/uc-berkeley-campus.jpeg')">
       <div class="container">
         <div class="row">
           <div class="col-lg-7 text-center mx-auto">
-            <h1 class="text-white pt-3 mt-n5">
+            <h1 class="text-white pt-3 mt-n5" style="text-shadow: 1px 1px 2px black;">
               Team Formation Engine
             </h1>
-            <p class="lead text-white mt-3">
+            <p class="lead text-white mt-3" style="text-shadow: 1px 1px 2px black;">
               Form optimal teams for your project-based courses and events <b>instantly</b>.
             </p>
             <a href="{% url 'upload-teams' %}" class="btn btn-cta mb-0 me-2" target="_blank">Start Forming Teams</a>
@@ -137,7 +138,7 @@
         <div class="col-md-auto">
           <div class="row">
             <div class="col-md-6 mt-md-0 mt-3">
-              <a href="/media/media/project-first-msexcel.xls"></a>
+              <a href="/media/media/project-first-msexcel.xlsx"></a>
                 <div class="card move-on-hover">
                   <img class="w-100" src="/media/media/data-science-carlos-muza-unsplash.jpg" alt="">
                 </div>
@@ -147,9 +148,9 @@
                   <div class="template-btns">
                     <a href="https://docs.google.com/forms/d/1_z2KVxO8_3H7QYz4HQXb6rzqZz-tlk1Y4HDdVadFR6k/copy" class="btn btn-secondary mb-0 me-2" target="_blank">Google Forms Template</a>
                     <a href="/media/media/project-first-csv.csv" class="btn btn-secondary mb-0 me-2" target="_blank">CSV Template</a>
-                    <a href="/media/media/project-first-msexcel.xls" class="btn btn-secondary mb-0 me-2" target="_blank">Excel Template</a>
+                    <a href="/media/media/project-first-msexcel.xlsx" class="btn btn-secondary mb-0 me-2" target="_blank">Excel Template</a>
                   </div>
-                  
+
                 </div>
               </a>
             </div>
@@ -168,7 +169,7 @@
                 </div>
               </a>
             </div>
-           
+
           </div>
         </div>
       </div>
