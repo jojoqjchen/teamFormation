@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from .models import csvUpload, numberOfDownloads # Import the models
-from .forms import fileForm, colForm, teamSizeForm, projectFirstParamForm # Import the forms
+from .forms import fileForm, colForm, teamSizeForm, projectFirstParamForm, projectFirstColForm # Import the forms
 import csv
 from django.http import HttpResponse
 import random
@@ -127,7 +127,6 @@ def pickColumns(request):
             else:
                 answers[i] = "3"
         request.session['answers'] = answers
-        print(answers)
         return redirect('/teamsize/')
 
     # Else, we need to create a dynamic form with the columns from the imported csv file
@@ -162,7 +161,7 @@ def projectFirstParam(request):
         request.session['numberOfProjects'] = numberOfProjects
         request.session['numberOfChoices'] = numberOfChoices
 
-        return redirect('/teamsize/')
+        return redirect('/project-first-col/')
 
     # If the form has not been filled yet
     else:
@@ -171,6 +170,52 @@ def projectFirstParam(request):
 
     return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '2', 'long': True, 'previous': "upload-teams", 'instructions': instructions})
 
+def projectFirstCol(request):
+    numChoices = request.session['numberOfChoices']
+    instructions = 'Select the corresponding ranking for each of your columns.'
+    colNames = list(request.session['colNames'])
+
+    #if the form is filled
+    if request.method == 'POST':
+
+        #Get raw data 
+        query = request.POST.copy() # !IMPORTANT
+        query.pop('csrfmiddlewaretoken') # Removing unwanted information
+        rawResponses = list(query.values())
+
+        significantCols = [None]*int(numChoices) #a list of column names in the order of the input 
+
+        numericCols = request.session['idxNumericCol']
+
+        for i in range(len(rawResponses)):
+            # print(rawResponses[i])
+            if rawResponses[i] != 0:
+                significantCols[int(rawResponses[i])-1] = colNames[numericCols[i]]
+
+        request.session['significantCols'] = significantCols
+        return redirect('/teamsize/')
+
+    else:
+        # BEGIN TODO: COPIED FROM ABOVE, CAN JUST MAKE INTO A FUNCTION----------
+        colNameIsNumeric = [] # Name of columns that contain numbers
+        idxNumericCol = []
+        row = request.session['data'][0]
+
+        for i in range(0, len(colNames)): # For each column
+            if row[i].isnumeric(): # Checking if the cells in the column contain numeric data
+                colNameIsNumeric.append(colNames[i]) # If yes, then add the column name in
+                idxNumericCol.append(i)
+            else:
+                colNameIsNumeric.append('')
+        request.session['idxNumericCol'] = idxNumericCol
+        # END: COPIED FROM ABOVE, CAN JUST MAKE INTO A FUNCTION----------
+
+        form = projectFirstColForm(colNames, idxNumericCol, numChoices)
+
+    return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '2.5', 'long': True, 'previous': "projectFirstParam", 'instructions': instructions})
+ 
+ 
+ 
  # Step 3: Enter team size
 @login_required
 def teamSize(request):
@@ -189,7 +234,7 @@ def teamSize(request):
     else:
 
         form = teamSizeForm()
-    previous = "columns" if request.session['algorithm'] == "1" else "projectFirstParam"
+    previous = "columns" if request.session['algorithm'] == "1" else "projectFirstCol"
 
     return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '3', 'long': True, 'previous': previous, 'instructions': instructions})
 
@@ -213,7 +258,8 @@ def downloadResultCsv(request):
     else:
         numberOfProjects = request.session['numberOfProjects']
         numberOfChoices = request.session['numberOfChoices']
-        report = project_first_teams(data,colNames, int(numberOfProjects), int(size), int(numberOfChoices), False)
+        significantCols = request.session['significantCols']
+        report = project_first_teams(data,colNames, int(numberOfProjects), int(size), int(numberOfChoices), significantCols, False)
 
     colNames.append('Team')
     writer = csv.writer(response)

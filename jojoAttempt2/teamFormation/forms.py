@@ -1,6 +1,6 @@
 from django import forms
 # from .models import upload, size, characteristics
-from .models import csvUpload, teamSize, pickCols, projectFirstParam
+from .models import csvUpload, teamSize, pickCols, projectFirstParam, projectFirstCol
 
 class fileForm(forms.ModelForm):
     class Meta:
@@ -58,3 +58,25 @@ class projectFirstParamForm(forms.ModelForm):
         self.fields['numberOfProjects'].label = 'Number of different Projects'
         self.fields['numberOfChoices'].widget.attrs.update({'class': 'form-control'})
         self.fields['numberOfChoices'].label = 'Number of choices per individual'
+
+class projectFirstColForm(forms.ModelForm):
+    #dynamically create fields for each project choice column 
+    def __init__(self, columns, colNameIsNumeric, numChoices, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        #Generate the choices 
+        COL_CHOICES = (("0", "Ignore"), ("1", "Top Choice"))
+        for i in range(1, int(numChoices)-1):
+            COL_CHOICES += ((str(i+1), "Choice " + str(i+1)), )
+        COL_CHOICES += ((str(numChoices), "Bottom Choice"), )
+
+        for i in range(len(columns)): # IF TWO COLUMNS HAVE THE SAME NAME, UNWANTED BEHAVIOR HAPPENS
+            if i in colNameIsNumeric:
+                default = "0"
+                field_name = columns[i]
+                self.fields[field_name] = forms.TypedChoiceField(choices = COL_CHOICES, required=True, initial = default)
+                self.fields[field_name].widget.attrs.update({'class': 'form-select'})
+
+    class Meta:
+        model = projectFirstCol
+        fields = '__all__'

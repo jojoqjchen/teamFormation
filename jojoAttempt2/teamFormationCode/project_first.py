@@ -4,7 +4,7 @@ import scipy as sc
 from scipy import optimize
 import cvxpy as cp
 
-def project_first_teams(data, columns, numberOfProjects, maxTeamSize, numberOfChoices = 3, isCsv = False):
+def project_first_teams(data, columns, numberOfProjects, maxTeamSize, numberOfChoices, significantCols, isCsv = False):
     # Initialization, Reading the survey information
 
     if isCsv: ## Needed for the jupyter notebook
@@ -12,22 +12,13 @@ def project_first_teams(data, columns, numberOfProjects, maxTeamSize, numberOfCh
     else:
         df = pd.DataFrame(data = data, columns = columns)
 
-    try:
-        colNames = []
-        for i in range(1,int(numberOfChoices)+1):
-            col = 'Project Choice '+str(i)
-            c = df[col]
-            colNames.append(col)
-    except KeyError:     # NOTE: Columns must include 'Choice 1', 'Choice 2', 'Choice 3'
-        raise KeyError
-
     # NOTE: Projects must be numbered between 1 and numberOfProjects.
 
     n = df.shape[0] # Number of students
     m = int(numberOfProjects) # Number of teams
     t = int(maxTeamSize) # Maximal Team size
 
-    choices = df.loc[:,colNames].to_numpy()
+    choices = df.loc[:,significantCols].to_numpy()
 
     # OPTIMIZATION
     ## By default, each project for each student has a value of 100.
@@ -44,7 +35,7 @@ def project_first_teams(data, columns, numberOfProjects, maxTeamSize, numberOfCh
 
         for k in range(choices.shape[1]): # For all the possible projects: k = choice number for the student i
 
-            c_choices[i*m+int(choices[i,k])-1]=k+1 #
+            c_choices[i*m+int(choices[i,k])-1]=k+1 
 
     ## CONSTRAINTS
     b_eq = np.ones((n,1)) # -> Equality constraints: each student must be assigned to 1 project

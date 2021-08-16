@@ -26,6 +26,10 @@ class projectFirstParam(models.Model):
     numberOfProjects = models.IntegerField(blank=True, null=True)
     numberOfChoices = models.IntegerField(blank=True, null=True)
 
+class projectFirstCol(models.Model):
+    pass
+
 class numberOfDownloads(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     download = models.IntegerField()
+
