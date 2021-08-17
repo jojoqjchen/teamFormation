@@ -21,7 +21,7 @@
                 <h4 class="font-weight-bolder">Sign Up</h4>
                 <p class="mb-0">
                   {% if msg %}
-                      {{ msg | safe }}
+                      User created - please <a href="{% url 'login' %}">login</a>.
                   {% else %}
                       Add your credentials
                   {% endif %}
