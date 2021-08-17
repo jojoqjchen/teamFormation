@@ -178,12 +178,12 @@ def projectFirstCol(request):
     #if the form is filled
     if request.method == 'POST':
 
-        #Get raw data 
+        #Get raw data
         query = request.POST.copy() # !IMPORTANT
         query.pop('csrfmiddlewaretoken') # Removing unwanted information
         rawResponses = list(query.values())
 
-        significantCols = [None]*int(numChoices) #a list of column names in the order of the input 
+        significantCols = [None]*int(numChoices) #a list of column names in the order of the input
 
         numericCols = request.session['idxNumericCol']
 
@@ -213,9 +213,9 @@ def projectFirstCol(request):
         form = projectFirstColForm(colNames, idxNumericCol, numChoices)
 
     return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '2.5', 'long': True, 'previous': "projectFirstParam", 'instructions': instructions})
- 
- 
- 
+
+
+
  # Step 3: Enter team size
 @login_required
 def teamSize(request):
@@ -268,9 +268,13 @@ def downloadResultCsv(request):
     for i in range(0,report.shape[0]):
         writer.writerow(list(report.iloc[i,:]))
 
-    user = numberOfDownloads.objects.get(user = request.user)
-    user.download+=1
-    user.save()
+    try:
+        user = numberOfDownloads.objects.get(user = request.user)
+        user.download+=1
+        user.save()
+    except:
+        n = numberOfDownloads(user = request.user, download = 1)
+        n.save()
 
     return response
 
@@ -314,9 +318,13 @@ def downloadResultXlsx(request):
 
     wb.save(response)
 
-    user = numberOfDownloads.objects.get(user = request.user)
-    user.download+=1
-    user.save()
+    try:
+        user = numberOfDownloads.objects.get(user = request.user)
+        user.download+=1
+        user.save()
+    except:
+        n = numberOfDownloads(user = request.user, download = 1)
+        n.save()
 
     return response
 
@@ -391,9 +399,13 @@ def downloadResultPdf(request): #https://www.youtube.com/watch?v=_zkYICsIbXI&ab_
 
     buffer.seek(0)
 
-    user = numberOfDownloads.objects.get(user = request.user)
-    user.download+=1
-    user.save()
+    try:
+        user = numberOfDownloads.objects.get(user = request.user)
+        user.download+=1
+        user.save()
+    except:
+        n = numberOfDownloads(user = request.user, download = 1)
+        n.save()
 
     return FileResponse(buffer, as_attachment=True, filename='Team-Formation-Results.pdf')
 
