@@ -15,6 +15,8 @@ from teamFormationCode.project_first import project_first_teams # Python script 
 from django.contrib.auth.models import User # Import the base User model
 from django.db.models import Sum # To query the database and sum results
 import pandas as pd
+from django.core.exceptions import ObjectDoesNotExist
+
 
 # Below: needed to output PDFs
 import io
@@ -295,9 +297,13 @@ def downloadResultCsv(request):
         user = numberOfDownloads.objects.get(user = request.user)
         user.download+=1
         user.save()
-    except:
+    except ObjectDoesNotExist:
         n = numberOfDownloads(user = request.user, download = 1)
         n.save()
+    except:
+        user = numberOfDownloads.objects.get(username = "default_user")
+        user.download+=1
+        user.save()
 
     return response
 
@@ -346,9 +352,13 @@ def downloadResultXlsx(request):
         user = numberOfDownloads.objects.get(user = request.user)
         user.download+=1
         user.save()
-    except:
+    except ObjectDoesNotExist:
         n = numberOfDownloads(user = request.user, download = 1)
         n.save()
+    except:
+        user = numberOfDownloads.objects.get(username = "default_user")
+        user.download+=1
+        user.save()
 
     return response
 
@@ -428,10 +438,14 @@ def downloadResultPdf(request): #https://www.youtube.com/watch?v=_zkYICsIbXI&ab_
         user = numberOfDownloads.objects.get(user = request.user)
         user.download+=1
         user.save()
-    except:
+    except ObjectDoesNotExist:
         n = numberOfDownloads(user = request.user, download = 1)
         n.save()
-
+    except:
+        user = numberOfDownloads.objects.get(username = "default_user")
+        user.download+=1
+        user.save()
+        
     return FileResponse(buffer, as_attachment=True, filename='Team-Formation-Results.pdf')
 
 ### FURTHER TESTS
