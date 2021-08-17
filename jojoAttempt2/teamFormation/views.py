@@ -161,6 +161,13 @@ def projectFirstParam(request):
         request.session['numberOfProjects'] = numberOfProjects
         request.session['numberOfChoices'] = numberOfChoices
 
+        #Validation
+        if not numberOfProjects or not int(numberOfProjects) >= 1:
+            return render(request, 'team-formation/team-formation-tool.html', {'form': projectFirstParamForm(), 'step': '2', 'previous': "upload-teams",'warning': 'Please input a valid number of projects to continue.', 'instructions': instructions})
+        if not numberOfChoices or not int(numberOfChoices) >= 1 or int(numberOfChoices) > int(numberOfProjects):
+            return render(request, 'team-formation/team-formation-tool.html', {'form': projectFirstParamForm(), 'step': '2', 'previous': "upload-teams",'warning': 'Please input a valid number of choices to continue.', 'instructions': instructions})
+
+
         return redirect('/project-first-col/')
 
     # If the form has not been filled yet
@@ -175,6 +182,20 @@ def projectFirstCol(request):
     instructions = 'Select the corresponding ranking for each of your columns.'
     colNames = list(request.session['colNames'])
 
+    # BEGIN TODO: COPIED FROM ABOVE, CAN JUST MAKE INTO A FUNCTION----------
+    colNameIsNumeric = [] # Name of columns that contain numbers
+    idxNumericCol = []
+    row = request.session['data'][0]
+
+    for i in range(0, len(colNames)): # For each column
+        if row[i].isnumeric(): # Checking if the cells in the column contain numeric data
+            colNameIsNumeric.append(colNames[i]) # If yes, then add the column name in
+            idxNumericCol.append(i)
+        else:
+            colNameIsNumeric.append('')
+    request.session['idxNumericCol'] = idxNumericCol
+    # END: COPIED FROM ABOVE, CAN JUST MAKE INTO A FUNCTION----------
+
     #if the form is filled
     if request.method == 'POST':
 
@@ -182,10 +203,22 @@ def projectFirstCol(request):
         query = request.POST.copy() # !IMPORTANT
         query.pop('csrfmiddlewaretoken') # Removing unwanted information
         rawResponses = list(query.values())
+        numericCols = request.session['idxNumericCol']
+
+        #Validation
+        noZeros = list(filter(lambda x: x != 0, rawResponses))
+        print(noZeros)
+        if len(noZeros) != int(numChoices):
+            return render(request, 'team-formation/team-formation-tool.html', {'form': projectFirstColForm(colNames, idxNumericCol, numChoices), 'step': '2.5', 'previous': "projectFirstParam",'warning': 'Please make sure that each possible rank is assigned to a column.', 'instructions': instructions})
+        noZeros.sort()
+        prev = 0
+        for i in noZeros:
+            if int(i)-prev != 1:
+                return render(request, 'team-formation/team-formation-tool.html', {'form': projectFirstColForm(colNames, idxNumericCol, numChoices), 'step': '2.5', 'previous': "projectFirstParam",'warning': 'Please make sure that each column is assigned to a unique rank.', 'instructions': instructions})
+            else:
+                prev = int(i) 
 
         significantCols = [None]*int(numChoices) #a list of column names in the order of the input
-
-        numericCols = request.session['idxNumericCol']
 
         for i in range(len(rawResponses)):
             # print(rawResponses[i])
@@ -196,22 +229,7 @@ def projectFirstCol(request):
         return redirect('/teamsize/')
 
     else:
-        # BEGIN TODO: COPIED FROM ABOVE, CAN JUST MAKE INTO A FUNCTION----------
-        colNameIsNumeric = [] # Name of columns that contain numbers
-        idxNumericCol = []
-        row = request.session['data'][0]
-
-        for i in range(0, len(colNames)): # For each column
-            if row[i].isnumeric(): # Checking if the cells in the column contain numeric data
-                colNameIsNumeric.append(colNames[i]) # If yes, then add the column name in
-                idxNumericCol.append(i)
-            else:
-                colNameIsNumeric.append('')
-        request.session['idxNumericCol'] = idxNumericCol
-        # END: COPIED FROM ABOVE, CAN JUST MAKE INTO A FUNCTION----------
-
         form = projectFirstColForm(colNames, idxNumericCol, numChoices)
-
     return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '2.5', 'long': True, 'previous': "projectFirstParam", 'instructions': instructions})
 
 
@@ -221,12 +239,16 @@ def projectFirstCol(request):
 def teamSize(request):
 
     instructions = 'Enter the ideal size for the teams.'
+    previous = "columns" if request.session['algorithm'] == "1" else "projectFirstCol"
 
     # If the form is filled
     if request.method == 'POST':
-
         size = request.POST.get('size')
         request.session['size'] = size
+
+        #Validation
+        if not size or not int(size) >= 1:
+            return render(request, 'team-formation/team-formation-tool.html', {'form': teamSizeForm(), 'step': '3', 'previous': previous,'warning': 'Please input a valid team size to continue.', 'instructions': instructions})
 
         return render(request, 'team-formation/success.html')
 
@@ -234,7 +256,7 @@ def teamSize(request):
     else:
 
         form = teamSizeForm()
-    previous = "columns" if request.session['algorithm'] == "1" else "projectFirstCol"
+    
 
     return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '3', 'long': True, 'previous': previous, 'instructions': instructions})
 

@@ -6,3 +6,4 @@ def validate_file_extension(value):
     valid_extensions = ['.csv','.xlsx','.xls']
     if not ext.lower() in valid_extensions:
         raise ValidationError('Unsupported file extension.', code = 'invalid')
+
