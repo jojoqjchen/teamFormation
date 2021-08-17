@@ -47,6 +47,7 @@ class teamSizeForm(forms.ModelForm):
         self.fields['size'].widget.attrs.update({'class': 'form-control'})
         self.fields['size'].label = 'Team Size'
 
+
 class projectFirstParamForm(forms.ModelForm):
     class Meta:
         model = projectFirstParam
@@ -60,22 +61,22 @@ class projectFirstParamForm(forms.ModelForm):
         self.fields['numberOfChoices'].label = 'Number of choices per individual'
 
 class projectFirstColForm(forms.ModelForm):
-    #dynamically create fields for each project choice column 
-    def __init__(self, columns, colNameIsNumeric, numChoices, *args, **kwargs):
+    #dynamically create fields for each project choice column
+    # NOTE: Removed colNameIsNumeric
+    def __init__(self, columns, numChoices, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        #Generate the choices 
+        #Generate the choices
         COL_CHOICES = (("0", "Ignore"), ("1", "Top Choice"))
         for i in range(1, int(numChoices)-1):
             COL_CHOICES += ((str(i+1), "Choice " + str(i+1)), )
         COL_CHOICES += ((str(numChoices), "Bottom Choice"), )
 
         for i in range(len(columns)): # IF TWO COLUMNS HAVE THE SAME NAME, UNWANTED BEHAVIOR HAPPENS
-            if i in colNameIsNumeric:
-                default = "0"
-                field_name = columns[i]
-                self.fields[field_name] = forms.TypedChoiceField(choices = COL_CHOICES, required=True, initial = default)
-                self.fields[field_name].widget.attrs.update({'class': 'form-select'})
+            default = "0"
+            field_name = columns[i]
+            self.fields[field_name] = forms.TypedChoiceField(choices = COL_CHOICES, required=True, initial = default)
+            self.fields[field_name].widget.attrs.update({'class': 'form-select'})
 
     class Meta:
         model = projectFirstCol

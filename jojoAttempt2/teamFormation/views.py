@@ -34,7 +34,7 @@ def home(request):
     return render(request, 'index.html', {'downloads':downloads['download__sum'],'users':users})
 
 # Step 1: Upload CSV File
-@login_required
+#@login_required
 def uploadFile(request):
 
     instructions = 'Enter your CSV or Excel file containing the information about the individuals.'
@@ -99,7 +99,7 @@ def uploadFile(request):
     return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '1', 'instructions': instructions})
 
 # Step 2: Pick similar and different columns
-@login_required
+#@login_required
 def pickColumns(request):
 
     instructions = 'Select the characteristics you want to optimize your teams on, or discard as many as you want.'
@@ -148,7 +148,7 @@ def pickColumns(request):
 
     return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '2', 'long': True, 'previous':"upload-teams", 'instructions': instructions})
 
-@login_required
+#@login_required
 def projectFirstParam(request):
 
     instructions = 'Complete the characteristics of the projects.'
@@ -183,17 +183,17 @@ def projectFirstCol(request):
     colNames = list(request.session['colNames'])
 
     # BEGIN TODO: COPIED FROM ABOVE, CAN JUST MAKE INTO A FUNCTION----------
-    colNameIsNumeric = [] # Name of columns that contain numbers
-    idxNumericCol = []
-    row = request.session['data'][0]
-
-    for i in range(0, len(colNames)): # For each column
-        if row[i].isnumeric(): # Checking if the cells in the column contain numeric data
-            colNameIsNumeric.append(colNames[i]) # If yes, then add the column name in
-            idxNumericCol.append(i)
-        else:
-            colNameIsNumeric.append('')
-    request.session['idxNumericCol'] = idxNumericCol
+    # colNameIsNumeric = [] # Name of columns that contain numbers
+    # idxNumericCol = []
+    # row = request.session['data'][0]
+    #
+    # for i in range(0, len(colNames)): # For each column
+    #     if row[i].isnumeric(): # Checking if the cells in the column contain numeric data
+    #         colNameIsNumeric.append(colNames[i]) # If yes, then add the column name in
+    #         idxNumericCol.append(i)
+    #     else:
+    #         colNameIsNumeric.append('')
+    # request.session['idxNumericCol'] = idxNumericCol
     # END: COPIED FROM ABOVE, CAN JUST MAKE INTO A FUNCTION----------
 
     #if the form is filled
@@ -203,39 +203,40 @@ def projectFirstCol(request):
         query = request.POST.copy() # !IMPORTANT
         query.pop('csrfmiddlewaretoken') # Removing unwanted information
         rawResponses = list(query.values())
-        numericCols = request.session['idxNumericCol']
+        # numericCols = request.session['idxNumericCol']
 
         #Validation
-        noZeros = list(filter(lambda x: x != 0, rawResponses))
+        noZeros = list(filter(lambda x: x != '0', rawResponses))
         print(noZeros)
+        print(numChoices)
         if len(noZeros) != int(numChoices):
-            return render(request, 'team-formation/team-formation-tool.html', {'form': projectFirstColForm(colNames, idxNumericCol, numChoices), 'step': '2.5', 'previous': "projectFirstParam",'warning': 'Please make sure that each possible rank is assigned to a column.', 'instructions': instructions})
+            return render(request, 'team-formation/team-formation-tool.html', {'form': projectFirstColForm(colNames, numChoices), 'step': '2.5', 'previous': "projectFirstParam",'warning': 'Please make sure that each possible rank is assigned to a column.', 'instructions': instructions})
         noZeros.sort()
         prev = 0
         for i in noZeros:
             if int(i)-prev != 1:
-                return render(request, 'team-formation/team-formation-tool.html', {'form': projectFirstColForm(colNames, idxNumericCol, numChoices), 'step': '2.5', 'previous': "projectFirstParam",'warning': 'Please make sure that each column is assigned to a unique rank.', 'instructions': instructions})
+                return render(request, 'team-formation/team-formation-tool.html', {'form': projectFirstColForm(colNames, numChoices), 'step': '2.5', 'previous': "projectFirstParam",'warning': 'Please make sure that each column is assigned to a unique rank.', 'instructions': instructions})
             else:
-                prev = int(i) 
+                prev = int(i)
 
         significantCols = [None]*int(numChoices) #a list of column names in the order of the input
 
         for i in range(len(rawResponses)):
             # print(rawResponses[i])
-            if rawResponses[i] != 0:
-                significantCols[int(rawResponses[i])-1] = colNames[numericCols[i]]
+            if rawResponses[i] != "0":
+                significantCols[int(rawResponses[i])-1] = colNames[i]
 
         request.session['significantCols'] = significantCols
         return redirect('/teamsize/')
 
     else:
-        form = projectFirstColForm(colNames, idxNumericCol, numChoices)
+        # NOTE: Removed idxNumericCol
+        form = projectFirstColForm(colNames, numChoices)
     return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '2.5', 'long': True, 'previous': "projectFirstParam", 'instructions': instructions})
 
 
-
  # Step 3: Enter team size
-@login_required
+#@login_required
 def teamSize(request):
 
     instructions = 'Enter the ideal size for the teams.'
@@ -256,12 +257,12 @@ def teamSize(request):
     else:
 
         form = teamSizeForm()
-    
+
 
     return render(request, 'team-formation/team-formation-tool.html', {'form': form, 'step': '3', 'long': True, 'previous': previous, 'instructions': instructions})
 
 # IDEA: Gather the two "download" views -> i.e. passing the format of the output in the argument
-@login_required
+#@login_required
 def downloadResultCsv(request):
 
     response = HttpResponse(
@@ -300,7 +301,7 @@ def downloadResultCsv(request):
 
     return response
 
-@login_required
+#@login_required
 def downloadResultXlsx(request):
     response = HttpResponse(
         content_type = 'application/ms-excel',
@@ -351,7 +352,7 @@ def downloadResultXlsx(request):
 
     return response
 
-@login_required
+#@login_required
 def downloadResultPdf(request): #https://www.youtube.com/watch?v=_zkYICsIbXI&ab_channel=CryceTruly
 
     data = request.session['data']

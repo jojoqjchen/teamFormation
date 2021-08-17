@@ -12,13 +12,27 @@ def project_first_teams(data, columns, numberOfProjects, maxTeamSize, numberOfCh
     else:
         df = pd.DataFrame(data = data, columns = columns)
 
-    # NOTE: Projects must be numbered between 1 and numberOfProjects.
-
     n = df.shape[0] # Number of students
     m = int(numberOfProjects) # Number of teams
     t = int(maxTeamSize) # Maximal Team size
 
-    choices = df.loc[:,significantCols].to_numpy()
+    # NOTE: We will number the projects from 1 to numberOfProjects to set up the solver.
+    # NOTE: To do this, we need to extract all the projects’ names, and assign them to 1-numberOfProjects
+    dict_init = pd.unique(df.loc[:,significantCols].values.ravel('K')) # Gathering all the different projects’ names
+    print("Significant Columns:{}".format(significantCols))
+    dict_init.sort()
+    print(dict_init)
+    
+    dictionary = {dict_init[i-1]: i for i in range(1,len(dict_init)+1)}
+    invert_dic = {i: dict_init[i-1] for i in range(1,len(dict_init)+1)}
+    #print(dictionary)
+    #print(invert_dic)
+
+    choices_raw = df.loc[:,significantCols]
+    choices_toNumber = choices_raw.replace(dictionary)
+    
+    choices = choices_toNumber.to_numpy()
+    #print(choices)
 
     # OPTIMIZATION
     ## By default, each project for each student has a value of 100.
@@ -83,7 +97,7 @@ def project_first_teams(data, columns, numberOfProjects, maxTeamSize, numberOfCh
         sub_list = x.value[i*m:(i+1)*m]
         for j in range(m): # we will search its project
             if sub_list[j]>=1:
-                df.at[i, 'Team'] = j+1
+                df.at[i, 'Team'] = invert_dic[j+1]
 
     df = df.sort_values('Team',ascending=True)
 
