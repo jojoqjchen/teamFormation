@@ -356,7 +356,7 @@ def downloadResultXlsx(request):
         n = numberOfDownloads(user = request.user, download = 1)
         n.save()
     except:
-        user = numberOfDownloads.objects.get(username = "default_user")
+        user = numberOfDownloads.objects.get(id = "3")
         user.download+=1
         user.save()
 
@@ -442,7 +442,7 @@ def downloadResultPdf(request): #https://www.youtube.com/watch?v=_zkYICsIbXI&ab_
         n = numberOfDownloads(user = request.user, download = 1)
         n.save()
     except:
-        user = numberOfDownloads.objects.get(username = "default_user")
+        user = numberOfDownloads.objects.get(id = "3")
         user.download+=1
         user.save()
 
