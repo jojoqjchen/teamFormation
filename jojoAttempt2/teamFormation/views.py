@@ -302,7 +302,8 @@ def downloadResultXlsx(request):
     else:
         numberOfProjects = request.session['numberOfProjects']
         numberOfChoices = request.session['numberOfChoices']
-        report = project_first_teams(data,colNames, int(numberOfProjects), int(size), int(numberOfChoices), False)
+        significantCols = request.session['significantCols']
+        report = project_first_teams(data,colNames, int(numberOfProjects), int(size), int(numberOfChoices), significantCols, False)
 
     colNames.append('Team')
     nCol = len(colNames)
@@ -342,7 +343,8 @@ def downloadResultPdf(request): #https://www.youtube.com/watch?v=_zkYICsIbXI&ab_
     else:
         numberOfProjects = request.session['numberOfProjects']
         numberOfChoices = request.session['numberOfChoices']
-        report = project_first_teams(data,colNames, int(numberOfProjects), int(size), int(numberOfChoices), False)
+        significantCols = request.session['significantCols']
+        report = project_first_teams(data,colNames, int(numberOfProjects), int(size), int(numberOfChoices), significantCols, False)
 
     # NOTE: Because sometimes there are too many columns/values are too "long"
     # We need to limit both the max column size and the max number of columns
