@@ -390,8 +390,13 @@ def downloadResultPdf(request): #https://www.youtube.com/watch?v=_zkYICsIbXI&ab_
         data_pd = data_pd.apply(lambda x: x.str[:10])
         data_pd.columns = data_pd.columns.to_series().apply(lambda x: x[:10])
         dataWithTeams = [data_pd.columns]+data_pd.values.tolist()
-    else:
-        dataWithTeams = [cols] + report.values.tolist()
+    else: # MODIFY TO CUT TOO LONG COLUMNS
+        data_pd = report
+        data_pd = data_pd.astype('string')
+        print(data_pd.info())
+        data_pd = data_pd.apply(lambda x: x.str[:10])
+        data_pd.columns = data_pd.columns.to_series().apply(lambda x: x[:10])
+        dataWithTeams = [data_pd.columns]+data_pd.values.tolist()
 
     # Create a file-like buffer to receive PDF data.
     buffer = io.BytesIO()
